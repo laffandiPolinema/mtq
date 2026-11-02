@@ -1,0 +1,232 @@
+@extends('layouts.app')
+
+@section('title', 'Pendaftaran Peserta · MTQ Kota Malang 2026')
+
+@section('content')
+    <section class="hero">
+        <div class="hero-copy">
+            <span class="eyebrow"><span class="eyebrow-dot"></span> Pendaftaran peserta dibuka</span>
+            <h1 class="hero-title">Pendaftaran<br>Peserta</h1>
+            <p class="hero-subtitle">Musabaqah Tilawatil Qur’an (MTQ)<br>Tingkat Kota Malang Tahun 2026</p>
+            <p class="hero-organizer"><span>Diselenggarakan oleh:</span><strong>PHBI &amp; Ketakmiran Masjid Jami’ Blimbing Kota Malang</strong></p>
+            <div class="event-details">
+                <div>
+                    <span class="detail-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 2v2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2zm-2 7h14v10H5z" fill="currentColor"/></svg></span>
+                    <span><small>Tanggal</small><strong>Sabtu–Minggu, 26–27 Des 2026</strong></span>
+                </div>
+                <div>
+                    <span class="detail-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 10.4 3.5 2-1 1.8L11 13V6h2z" fill="currentColor"/></svg></span>
+                    <span><small>Waktu</small><strong>07.30 WIB s.d. selesai</strong></span>
+                </div>
+                <div>
+                    <span class="detail-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" fill="currentColor"/></svg></span>
+                    <span><small>Tempat</small><strong>Malang Creative Center (MCC)</strong></span>
+                </div>
+            </div>
+            <div class="hero-actions">
+                <a class="button button-primary" href="#daftar">Daftar sekarang <span aria-hidden="true">→</span></a>
+                <a class="button button-outline" href="{{ route('status.form') }}">Cek status &amp; pembayaran</a>
+            </div>
+        </div>
+
+        <div class="hero-art" aria-hidden="true">
+            <svg viewBox="0 0 360 420" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="180" cy="372" rx="170" ry="16" fill="url(#g-gold)" opacity=".55"/>
+                <path d="M8 372 V232 C8 206 30 190 46 176 C56 166 62 154 64 140 C66 154 72 166 82 176 C98 190 120 206 120 232 V372 Z" fill="url(#p-lattice)" stroke="url(#g-gold-v)" stroke-width="7"/>
+                <path d="M240 372 V232 C240 206 262 190 278 176 C288 166 294 154 296 140 C298 154 304 166 314 176 C330 190 352 206 352 232 V372 Z" fill="url(#p-lattice)" stroke="url(#g-gold-v)" stroke-width="7"/>
+                <path d="M62 372 V178 C62 132 106 108 134 84 C154 66 172 44 180 12 C188 44 206 66 226 84 C254 108 298 132 298 178 V372 Z" fill="url(#p-lattice)" stroke="url(#g-gold-v)" stroke-width="9"/>
+                <text x="180" y="172" text-anchor="middle" class="art-calligraphy">اقرأ</text>
+                <g transform="translate(180 300)">
+                    <path d="M-62 56 L52 -8 M62 56 L-52 -8" stroke="#0b5a3c" stroke-width="13" stroke-linecap="round"/>
+                    <path d="M-62 56 L52 -8 M62 56 L-52 -8" stroke="#1f7a57" stroke-width="5" stroke-linecap="round"/>
+                    <path d="M0 2 C-24 -14 -52 -16 -78 -6 L-70 22 C-46 12 -22 14 0 28 Z" fill="#fffdf6" stroke="#d9c79b" stroke-width="2"/>
+                    <path d="M0 2 C24 -14 52 -16 78 -6 L70 22 C46 12 22 14 0 28 Z" fill="#fffdf6" stroke="#d9c79b" stroke-width="2"/>
+                    <path d="M-66 -1 C-44 -8 -22 -6 -6 6 M-62 7 C-42 0 -22 2 -6 13 M6 6 C22 -6 44 -8 66 -1 M6 13 C22 2 42 0 62 7" stroke="#cdbb8f" stroke-width="1.2" fill="none"/>
+                </g>
+                <g fill="#fff">
+                    <circle cx="28" cy="388" r="26"/><circle cx="70" cy="394" r="22"/><circle cx="300" cy="392" r="24"/><circle cx="338" cy="386" r="26"/>
+                </g>
+            </svg>
+            <p class="art-caption">“Dengan Al-Qur’an kita wujudkan masyarakat Kota Malang yang religius, berakhlak mulia, dan berdaya saing.”</p>
+        </div>
+    </section>
+
+    <section class="theme-band">
+        <span class="section-kicker">Tema acara</span>
+        <blockquote>
+            <span class="quote-mark" aria-hidden="true">“</span>
+            Menggali potensi generasi Qur’ani yang berakhlak mulia, berprestasi, dan berdaya saing
+            <span class="quote-mark" aria-hidden="true">”</span>
+        </blockquote>
+    </section>
+
+    <section class="content-section" id="cabang">
+        <div class="section-heading">
+            <div><span class="section-kicker">Ruang untuk bertumbuh</span><h2 class="display-title">Cabang perlombaan</h2></div>
+            <p>Peserta bersifat umum atau perwakilan lembaga pada seluruh kecamatan di Kota Malang yang memenuhi persyaratan sesuai ketentuan LPTQ.</p>
+        </div>
+        @php($branchIcons = [
+            'tilawah' => 'M12 6c-2-1.6-5-2-8-1.5V19c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V4.5C17 4 14 4.4 12 6zm0 0v14',
+            'khot_indah' => 'M4 20l4-1 11-11-3-3L5 16zm10-14 3 3M4 20h16',
+            'mhq' => 'M12 4a5 5 0 0 0-5 5c0 1.6.8 3 2 4v3h6v-3c1.2-1 2-2.4 2-4a5 5 0 0 0-5-5zm-2 15h4',
+            'murottal' => 'M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4',
+        ])
+        <div class="branch-grid">
+            @foreach ($branches as $key => $label)
+                <article class="branch-card">
+                    <span class="icon-circle" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="{{ $branchIcons[$key] }}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    <span class="branch-number">0{{ $loop->iteration }}</span>
+                    <h3>{{ $label }}</h3>
+                    <p>{{ $key === 'tilawah' ? 'Kategori anak-anak, remaja, dewasa, dan lansia.' : 'Terbuka bagi peserta yang memenuhi ketentuan LPTQ.' }}</p>
+                </article>
+            @endforeach
+        </div>
+    </section>
+
+    <section class="content-section fee-section" id="biaya">
+        <div class="fee-card">
+            <span class="section-kicker">Biaya pendaftaran</span>
+            <strong class="fee-amount">Rp {{ number_format($registrationFee, 0, ',', '.') }}</strong>
+            <p>per peserta, <strong>ditambah 3 digit kode unik</strong> yang diberikan otomatis setelah formulir terkirim.</p>
+            <div class="fee-example">
+                <span>Contoh nominal transfer</span>
+                <strong>Rp {{ substr(number_format($registrationFee + 123, 0, ',', '.'), 0, -3) }}<em>123</em></strong>
+                <small>Tiga digit terakhir menjadi penanda pembayaran atas nama Anda.</small>
+            </div>
+        </div>
+        <div class="flow">
+            <div class="section-heading"><div><span class="section-kicker">Alur pendaftaran</span><h2 class="display-title">Empat langkah mudah</h2></div></div>
+            <ol class="flow-steps">
+                <li><span>1</span><div><h3>Isi formulir</h3><p>Lengkapi data peserta dan pilih cabang lomba.</p></div></li>
+                <li><span>2</span><div><h3>Transfer sesuai nominal unik</h3><p>Kirim ke rekening {{ config('mtq.bank.name') }} a.n. {{ config('mtq.bank.account_name') }} tepat sampai 3 digit terakhir.</p></div></li>
+                <li><span>3</span><div><h3>Unggah bukti transfer</h3><p>Langsung setelah mendaftar, atau kapan saja lewat menu Cek pendaftaran.</p></div></li>
+                <li><span>4</span><div><h3>Verifikasi panitia</h3><p>Pantau status pembayaran dan data peserta dengan kode pendaftaran.</p></div></li>
+            </ol>
+        </div>
+    </section>
+
+    <section class="registration-section" id="daftar">
+        <div class="form-intro">
+            <span class="section-kicker">Langkah pertama</span>
+            <h2 class="display-title">Formulir<br>pendaftaran</h2>
+            <p>Isi data peserta dengan benar. Setelah formulir terkirim Anda akan mendapat <strong>kode pendaftaran</strong> dan <strong>nominal transfer unik</strong>.</p>
+            <div class="privacy-note"><span>✓</span><p>Data digunakan panitia untuk keperluan registrasi dan verifikasi peserta.</p></div>
+        </div>
+
+        <form class="registration-form" action="{{ route('registration.store') }}" method="POST">
+            @csrf
+            <div class="form-heading"><span class="step-badge">01</span><div><h3>Data peserta</h3><p>Informasi dasar calon peserta</p></div></div>
+
+            <div class="field-grid">
+                <div class="field field-wide">
+                    <label for="full_name">Nama lengkap <span>*</span></label>
+                    <input id="full_name" name="full_name" type="text" value="{{ old('full_name') }}" placeholder="Nama sesuai identitas" autocomplete="name" required>
+                    @error('full_name') <small class="field-error">{{ $message }}</small> @enderror
+                </div>
+                <div class="field">
+                    <label for="birth_place">Tempat lahir <span>*</span></label>
+                    <input id="birth_place" name="birth_place" type="text" value="{{ old('birth_place') }}" placeholder="Kota kelahiran" required>
+                    @error('birth_place') <small class="field-error">{{ $message }}</small> @enderror
+                </div>
+                <div class="field">
+                    <label for="birth_date">Tanggal lahir <span>*</span></label>
+                    <input id="birth_date" name="birth_date" type="date" value="{{ old('birth_date') }}" max="{{ now()->toDateString() }}" required>
+                    @error('birth_date') <small class="field-error">{{ $message }}</small> @enderror
+                </div>
+                <div class="field">
+                    <label for="gender">Jenis kelamin <span>*</span></label>
+                    <select id="gender" name="gender" required>
+                        <option value="">Pilih jenis kelamin</option>
+                        <option value="male" @selected(old('gender') === 'male')>Laki-laki</option>
+                        <option value="female" @selected(old('gender') === 'female')>Perempuan</option>
+                    </select>
+                    @error('gender') <small class="field-error">{{ $message }}</small> @enderror
+                </div>
+                <div class="field">
+                    <label for="district">Kecamatan domisili <span>*</span></label>
+                    <select id="district" name="district" required>
+                        <option value="">Pilih kecamatan</option>
+                        @foreach ($districts as $district)
+                            <option value="{{ $district }}" @selected(old('district') === $district)>{{ $district }}</option>
+                        @endforeach
+                    </select>
+                    @error('district') <small class="field-error">{{ $message }}</small> @enderror
+                </div>
+                <div class="field field-wide">
+                    <label for="address">Alamat domisili <span>*</span></label>
+                    <textarea id="address" name="address" rows="2" placeholder="Jalan, kelurahan, dan kode pos" required>{{ old('address') }}</textarea>
+                    @error('address') <small class="field-error">{{ $message }}</small> @enderror
+                </div>
+                <div class="field">
+                    <label for="institution">Lembaga / sekolah <small>Opsional</small></label>
+                    <input id="institution" name="institution" type="text" value="{{ old('institution') }}" placeholder="Nama lembaga">
+                    @error('institution') <small class="field-error">{{ $message }}</small> @enderror
+                </div>
+                <div class="field">
+                    <label for="phone">Nomor WhatsApp <span>*</span></label>
+                    <input id="phone" name="phone" type="tel" value="{{ old('phone') }}" placeholder="08xxxxxxxxxx" autocomplete="tel" required>
+                    @error('phone') <small class="field-error">{{ $message }}</small> @enderror
+                </div>
+                <div class="field field-wide">
+                    <label for="email">Email <small>Opsional</small></label>
+                    <input id="email" name="email" type="email" value="{{ old('email') }}" placeholder="nama@email.com" autocomplete="email">
+                    @error('email') <small class="field-error">{{ $message }}</small> @enderror
+                </div>
+            </div>
+
+            <div class="form-divider"></div>
+            <div class="form-heading"><span class="step-badge">02</span><div><h3>Pilihan lomba</h3><p>Pilih satu cabang untuk diikuti</p></div></div>
+            <div class="field-grid">
+                <div class="field field-wide">
+                    <label for="branch">Cabang perlombaan <span>*</span></label>
+                    <select id="branch" name="branch" required>
+                        <option value="">Pilih cabang lomba</option>
+                        @foreach ($branches as $key => $label)
+                            <option value="{{ $key }}" @selected(old('branch') === $key)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                    @error('branch') <small class="field-error">{{ $message }}</small> @enderror
+                </div>
+                <div class="field field-wide" id="category-field" @if (old('branch') !== 'tilawah') hidden @endif>
+                    <label for="category">Kategori tilawah <span>*</span></label>
+                    <select id="category" name="category">
+                        <option value="">Pilih kategori</option>
+                        @foreach ($categories as $key => $label)
+                            <option value="{{ $key }}" @selected(old('category') === $key)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                    @error('category') <small class="field-error">{{ $message }}</small> @enderror
+                </div>
+            </div>
+
+            <div class="form-divider"></div>
+            <div class="fee-summary">
+                <span>Biaya pendaftaran</span>
+                <strong>Rp {{ number_format($registrationFee, 0, ',', '.') }} <small>+ kode unik 3 digit</small></strong>
+            </div>
+
+            <button class="button button-primary submit-button" type="submit">Kirim pendaftaran <span aria-hidden="true">→</span></button>
+            <p class="form-footnote">Dengan mengirim formulir ini, Anda menyetujui data di atas digunakan untuk proses pendaftaran MTQ.</p>
+        </form>
+    </section>
+
+    <section class="bottom-cta">
+        <div><span class="section-kicker">Sudah mendaftar?</span><h2>Pantau status &amp; unggah bukti pembayaran.</h2></div>
+        <a class="button button-light" href="{{ route('status.form') }}">Cek status <span aria-hidden="true">→</span></a>
+    </section>
+
+    <script>
+        const branchSelect = document.getElementById('branch');
+        const categoryField = document.getElementById('category-field');
+        const categorySelect = document.getElementById('category');
+
+        function updateCategoryField() {
+            const isTilawah = branchSelect.value === 'tilawah';
+            categoryField.hidden = !isTilawah;
+            categorySelect.required = isTilawah;
+        }
+
+        branchSelect.addEventListener('change', updateCategoryField);
+        updateCategoryField();
+    </script>
+@endsection
