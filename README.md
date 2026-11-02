@@ -48,3 +48,7 @@ Tes otomatis menggunakan SQLite in-memory:
 ```sh
 php artisan test
 ```
+
+## Production
+
+Panduan memasang di VPS (Ubuntu) ada di [deploy/README.md](deploy/README.md).
