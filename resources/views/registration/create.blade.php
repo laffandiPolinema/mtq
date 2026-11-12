@@ -35,7 +35,9 @@
                 <path d="M8 372 V232 C8 206 30 190 46 176 C56 166 62 154 64 140 C66 154 72 166 82 176 C98 190 120 206 120 232 V372 Z" fill="url(#p-lattice)" stroke="url(#g-gold-v)" stroke-width="7"/>
                 <path d="M240 372 V232 C240 206 262 190 278 176 C288 166 294 154 296 140 C298 154 304 166 314 176 C330 190 352 206 352 232 V372 Z" fill="url(#p-lattice)" stroke="url(#g-gold-v)" stroke-width="7"/>
                 <path d="M62 372 V178 C62 132 106 108 134 84 C154 66 172 44 180 12 C188 44 206 66 226 84 C254 108 298 132 298 178 V372 Z" fill="url(#p-lattice)" stroke="url(#g-gold-v)" stroke-width="9"/>
-                <text x="180" y="172" text-anchor="middle" class="art-calligraphy">اقرأ</text>
+                <rect x="94" y="132" width="172" height="104" rx="18" fill="#06331d" fill-opacity=".88" stroke="url(#g-gold)" stroke-width="2.5"/>
+                <text x="180" y="200" text-anchor="middle" class="art-title">MTQ</text>
+                <text x="180" y="224" text-anchor="middle" class="art-year">2026</text>
                 <g transform="translate(180 300)">
                     <path d="M-62 56 L52 -8 M62 56 L-52 -8" stroke="#0b5a3c" stroke-width="13" stroke-linecap="round"/>
                     <path d="M-62 56 L52 -8 M62 56 L-52 -8" stroke="#1f7a57" stroke-width="5" stroke-linecap="round"/>
