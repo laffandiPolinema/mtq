@@ -76,6 +76,22 @@ return [
         ['name' => 'H. Erik Agus Wilyanto', 'phone' => '081334997157'],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Akun Admin Awal
+    |--------------------------------------------------------------------------
+    |
+    | Dipakai oleh AdminUserSeeder (php artisan db:seed). Isi di .env, jangan
+    | ditulis di kode karena repository bersifat publik.
+    |
+    */
+
+    'admin' => [
+        'name' => env('MTQ_ADMIN_NAME', 'Admin MTQ 2026'),
+        'email' => env('MTQ_ADMIN_EMAIL'),
+        'password' => env('MTQ_ADMIN_PASSWORD'),
+    ],
+
     'address' => 'Masjid Jami’ Blimbing, Jl. Ahmad Yani No.55, Blimbing, Kota Malang 65126',
 
 ];
