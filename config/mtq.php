@@ -3,52 +3,11 @@
 return [
 
     /*
-    |--------------------------------------------------------------------------
-    | Cabang, Kategori, dan Biaya Pendaftaran
-    |--------------------------------------------------------------------------
-    |
-    | Biaya ditentukan per kategori. Setiap peserta juga mendapat kode unik
-    | tiga digit (001–999) yang ditambahkan ke biaya agar panitia dapat
-    | mencocokkan mutasi rekening dengan pendaftar.
-    |
-    | Cabang dengan 'open' => false tetap tampil di website sebagai
-    | "segera diumumkan", tetapi belum bisa dipilih di formulir.
-    |
+    | Cabang, kategori, dan biaya pendaftaran dikelola panitia melalui menu
+    | "Cabang & biaya" di panel panitia (tabel competition_branches dan
+    | competition_categories). Setiap peserta juga mendapat kode unik tiga digit
+    | (001–999) yang ditambahkan ke biaya agar mutasi rekening mudah dicocokkan.
     */
-
-    'branches' => [
-        'tilawah' => [
-            'label' => 'MTQ (Tilawah Al-Qur’an)',
-            'open' => true,
-            'categories' => [
-                'anak-anak' => ['label' => 'Tilawah Anak', 'description' => 'SD/MI s.d. kelas 8 SMP/MTs', 'fee' => 35000],
-                'remaja' => ['label' => 'Tilawah Remaja', 'description' => 'Kelas 9 SMP/MTs s.d. kelas 12 SMA/MA', 'fee' => 50000],
-                'dewasa' => ['label' => 'Tilawah Dewasa', 'description' => 'Mahasiswa s.d. usia maks. 41 tahun', 'fee' => 70000, 'max_age' => 41],
-            ],
-        ],
-        'mhq' => [
-            'label' => 'MHQ (Hifdzil Qur’an)',
-            'open' => true,
-            'categories' => [
-                'anak-anak' => ['label' => 'Juz 30', 'description' => 'SD/MI', 'fee' => 35000],
-            ],
-        ],
-        'khot_indah' => [
-            'label' => 'MKQ (Khattil Qur’an)',
-            // Buka setelah biaya pendaftaran MKQ diputuskan: isi 'fee' lalu ubah 'open' menjadi true.
-            'open' => false,
-            'categories' => [
-                'umum' => ['label' => 'Umum', 'description' => 'Kaligrafi mushaf, khat Naskhi', 'fee' => null],
-            ],
-        ],
-        'murottal' => [
-            'label' => 'Murottal',
-            'open' => true,
-            'categories' => [
-                'anak-anak' => ['label' => 'Tartil Anak', 'description' => 'SD/MI s.d. kelas 8 SMP/MTs', 'fee' => 35000],
-            ],
-        ],
-    ],
 
     /*
     |--------------------------------------------------------------------------

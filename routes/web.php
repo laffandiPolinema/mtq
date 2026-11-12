@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\AdminCompetitionBranchController;
+use App\Http\Controllers\AdminCompetitionCategoryController;
 use App\Http\Controllers\AdminParticipantController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\RegistrationDocumentController;
@@ -28,6 +30,16 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/logout', [AdminAuthController::class, 'destroy'])->name('logout');
+    Route::resource('cabang', AdminCompetitionBranchController::class)
+        ->except('show')
+        ->parameters(['cabang' => 'branch'])
+        ->names('branches');
+    Route::resource('cabang.kategori', AdminCompetitionCategoryController::class)
+        ->only(['create', 'store', 'edit', 'update', 'destroy'])
+        ->shallow()
+        ->parameters(['cabang' => 'branch', 'kategori' => 'category'])
+        ->names('branches.categories');
+
     Route::get('/peserta', [AdminParticipantController::class, 'index'])->name('participants.index');
     Route::get('/peserta/laporan', [AdminParticipantController::class, 'export'])->name('participants.export');
     Route::get('/peserta/{participant}', [AdminParticipantController::class, 'show'])->name('participants.show');

@@ -120,34 +120,43 @@ class Participant extends Model
     }
 
     /**
-     * Semua cabang lomba (termasuk yang belum dibuka), sesuai config/mtq.php.
+     * Semua cabang lomba (termasuk yang ditutup), dari data master panitia.
      *
      * @return array<string, string>
      */
     public static function branches(): array
     {
-        return array_map(fn (array $branch): string => $branch['label'], config('mtq.branches'));
+        return array_map(fn (array $branch): string => $branch['label'], CompetitionBranch::catalogue());
     }
 
     /**
-     * Cabang yang sudah dapat dipilih di formulir pendaftaran.
+     * Cabang yang dapat dipilih di formulir pendaftaran.
      *
      * @return array<string, string>
      */
     public static function openBranches(): array
     {
-        return array_intersect_key(
-            self::branches(),
-            array_filter(config('mtq.branches'), fn (array $branch): bool => $branch['open']),
-        );
+        return array_map(fn (array $branch): string => $branch['label'], CompetitionBranch::openCatalogue());
     }
 
     /**
-     * @return array<string, array{label: string, description: string, fee: int}>
+     * Semua kategori sebuah cabang (termasuk yang ditutup).
+     *
+     * @return array<string, array{label: string, description: ?string, fee: int, max_age: ?int, open: bool}>
      */
     public static function categoriesFor(string $branch): array
     {
-        return config("mtq.branches.{$branch}.categories", []);
+        return CompetitionBranch::catalogue()[$branch]['categories'] ?? [];
+    }
+
+    /**
+     * Kategori yang dapat dipilih di formulir untuk sebuah cabang.
+     *
+     * @return array<string, array{label: string, description: ?string, fee: int, max_age: ?int, open: bool}>
+     */
+    public static function openCategoriesFor(string $branch): array
+    {
+        return CompetitionBranch::openCatalogue()[$branch]['categories'] ?? [];
     }
 
     public static function feeFor(string $branch, string $category): ?int
@@ -169,9 +178,11 @@ class Participant extends Model
         $category = self::categoriesFor($this->branch)[$this->category] ?? null;
 
         // Kategori lama yang sudah tidak ada di konfigurasi (mis. "lansia") tetap ditampilkan apa adanya.
-        return $category === null
-            ? ucfirst($this->category)
-            : "{$category['label']} ({$category['description']})";
+        if ($category === null) {
+            return ucfirst($this->category);
+        }
+
+        return $category['description'] ? "{$category['label']} ({$category['description']})" : $category['label'];
     }
 
     public function paymentStatusLabel(): string

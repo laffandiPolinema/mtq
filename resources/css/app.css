@@ -323,6 +323,30 @@ main { position: relative; z-index: 1; }
 /* ---------- Panel panitia ---------- */
 .admin-section { position: relative; max-width: 1240px; margin: auto; padding: 60px 32px 90px; }
 .back-link { display: inline-block; margin-bottom: 18px; }
+.admin-tabs { margin-bottom: 26px; display: inline-flex; gap: 4px; padding: 5px; background: #fff; border-radius: 999px; box-shadow: var(--shadow); }
+.admin-tabs a { padding: 9px 18px; color: var(--muted); border-radius: 999px; font-size: 13px; font-weight: 700; }
+.admin-tabs a.active { color: #fff; background: var(--green); }
+.admin-section .admin-tabs + .back-link { display: block; }
+.master-note { margin: 0 0 22px; }
+.master-list { display: grid; gap: 22px; }
+.master-branch { padding: 24px; }
+.master-branch-head { margin-bottom: 16px; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.master-branch-head h2 { margin: 0 0 6px; }
+.master-meta { margin: 0; display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; }
+.button-compact { min-height: 38px; padding: 0 16px; font-size: 13px; }
+.row-actions { display: flex; gap: 6px; }
+.row-actions form { margin: 0; }
+.button-small.button-danger { background: #b4432f; }
+.admin-form-section { max-width: 760px; }
+.admin-form { display: grid; gap: 18px; }
+.admin-form h1 { margin: 6px 0 4px; font-size: clamp(28px, 4vw, 38px); }
+.admin-form .button { justify-self: start; }
+.admin-form .field-grid { grid-template-columns: 1fr 1fr 1fr; }
+.toggle-field { padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; background: #f7f6f1; border-radius: 14px; cursor: pointer; }
+.toggle-field input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--green); }
+.toggle-field strong, .toggle-field small { display: block; }
+.toggle-field strong { color: var(--green-dark); font-size: 14px; }
+.toggle-field small { margin-top: 3px; color: var(--muted); font-size: 12px; }
 .heading-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .filter-hint { margin: -6px 0 14px; color: var(--muted); font-size: 12px; }
 .filter-hint .text-link { color: var(--green); font-size: 12px; text-decoration: underline; }
@@ -425,6 +449,7 @@ a.document-empty { color: var(--green); }
     .admin-heading { flex-direction: column; align-items: flex-start; }
     .panel .status-form, .reject-form { flex-direction: column; align-items: stretch; }
     .document-grid, .upload-grid { grid-template-columns: 1fr; }
+    .admin-form .field-grid { grid-template-columns: 1fr; }
     .lantern-lg { width: 30px; }
     .lantern-sm { width: 20px; }
 }

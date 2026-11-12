@@ -104,19 +104,15 @@ class ParticipantRegistrationTest extends TestCase
         }
     }
 
-    public function test_mkq_cannot_be_chosen_until_its_fee_is_announced(): void
+    public function test_mkq_is_open_for_the_public_category_at_35000(): void
     {
-        $this->get('/')
-            ->assertSee('MKQ (Khattil Qur’an) (segera dibuka)')
-            ->assertSee('Biaya &amp; pendaftaran segera dibuka', false);
-
         $this->post(route('registration.store'), [
             ...$this->validRegistration(),
             'branch' => 'khot_indah',
             'category' => 'umum',
-        ])->assertSessionHasErrors('branch');
+        ])->assertRedirect();
 
-        $this->assertDatabaseCount('participants', 0);
+        $this->assertDatabaseHas('participants', ['branch' => 'khot_indah', 'category' => 'umum', 'registration_fee' => 35000]);
     }
 
     public function test_registration_is_only_accepted_between_9_november_and_24_december(): void

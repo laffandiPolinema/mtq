@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Middleware\EnsureParticipantAccess;
+use App\Models\CompetitionBranch;
 use App\Models\Participant;
 use App\Services\ParticipantDocumentStore;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -20,8 +21,8 @@ class RegistrationController extends Controller
     public function create(): View
     {
         return view('registration.create', [
-            'branchConfig' => config('mtq.branches'),
-            'openBranches' => Participant::openBranches(),
+            'branchConfig' => CompetitionBranch::catalogue(),
+            'openCatalogue' => CompetitionBranch::openCatalogue(),
             'districts' => Participant::DISTRICTS,
             'period' => $this->registrationPeriod(),
         ]);
@@ -52,7 +53,7 @@ class RegistrationController extends Controller
             'branch' => ['required', Rule::in(array_keys(Participant::openBranches()))],
             'category' => [
                 'required',
-                Rule::in(array_keys(Participant::categoriesFor((string) $request->input('branch')))),
+                Rule::in(array_keys(Participant::openCategoriesFor((string) $request->input('branch')))),
             ],
             'identity_document' => ParticipantDocumentStore::rules('identity_document'),
             'photo' => ParticipantDocumentStore::rules('photo'),

@@ -4,6 +4,7 @@
 
 @section('content')
     <section class="admin-section">
+        @include('admin.partials.nav')
         <div class="admin-heading">
             <div><span class="section-kicker">Panel panitia</span><h1 class="display-title">Data peserta</h1><p>Kelola pendaftaran, cek bukti pembayaran, dan verifikasi calon peserta MTQ 2026.</p></div>
             <div class="heading-actions">

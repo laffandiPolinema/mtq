@@ -2,8 +2,6 @@
 
 @section('title', 'Pendaftaran Peserta · MTQ Kota Malang 2026')
 
-@use('App\Models\Participant')
-
 @section('content')
     <section class="hero">
         <div class="hero-copy">
@@ -93,24 +91,22 @@
         ])
         <div class="branch-grid">
             @foreach ($branchConfig as $key => $branch)
-                <article class="branch-card @unless ($branch['open']) branch-card-soon @endunless">
+                @php($isOpen = isset($openCatalogue[$key]))
+                <article class="branch-card @unless ($isOpen) branch-card-soon @endunless">
                     <span class="icon-circle" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="{{ $branchIcons[$key] ?? $branchIcons['tilawah'] }}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                    <span class="branch-number">0{{ $loop->iteration }}</span>
+                    <span class="branch-number">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                     <h3>{{ $branch['label'] }}</h3>
-                    @if ($branch['open'])
-                        <ul class="branch-fees">
-                            @foreach ($branch['categories'] as $category)
-                                <li><span><strong>{{ $category['label'] }}</strong><small>{{ $category['description'] }}</small></span><b>Rp {{ number_format($category['fee'], 0, ',', '.') }}</b></li>
-                            @endforeach
-                        </ul>
-                    @else
-                        <ul class="branch-fees">
-                            @foreach ($branch['categories'] as $category)
-                                <li><span><strong>{{ $category['label'] }}</strong><small>{{ $category['description'] }}</small></span></li>
-                            @endforeach
-                        </ul>
-                        <p class="soon-badge">Biaya &amp; pendaftaran segera dibuka</p>
-                    @endif
+                    <ul class="branch-fees">
+                        @foreach ($isOpen ? $openCatalogue[$key]['categories'] : $branch['categories'] as $category)
+                            <li>
+                                <span><strong>{{ $category['label'] }}</strong>@if ($category['description'])<small>{{ $category['description'] }}</small>@endif</span>
+                                @if ($isOpen)<b>Rp {{ number_format($category['fee'], 0, ',', '.') }}</b>@endif
+                            </li>
+                        @endforeach
+                    </ul>
+                    @unless ($isOpen)
+                        <p class="soon-badge">Pendaftaran cabang ini belum/tidak dibuka</p>
+                    @endunless
                 </article>
             @endforeach
         </div>
@@ -119,12 +115,13 @@
     <section class="content-section fee-section" id="biaya">
         <div class="fee-card">
             <span class="section-kicker">Biaya pendaftaran</span>
-            @php($fees = collect($branchConfig)->flatMap(fn ($branch) => array_column($branch['categories'], 'fee')))
-            <strong class="fee-amount"><small>mulai</small> Rp {{ number_format($fees->min(), 0, ',', '.') }}</strong>
+            @php($fees = collect($openCatalogue)->flatMap(fn ($branch) => array_column($branch['categories'], 'fee')))
+            @php($exampleFee = $fees->min() ?? 0)
+            <strong class="fee-amount"><small>mulai</small> Rp {{ number_format($exampleFee, 0, ',', '.') }}</strong>
             <p>per peserta <strong>sesuai cabang &amp; kategori</strong> (lihat kartu cabang di atas), <strong>ditambah 3 digit kode unik</strong> yang diberikan otomatis setelah formulir terkirim.</p>
             <div class="fee-example">
-                <span>Contoh: Tilawah kategori Remaja</span>
-                <strong>Rp {{ substr(number_format(Participant::feeFor('tilawah', 'remaja') + 123, 0, ',', '.'), 0, -3) }}<em>123</em></strong>
+                <span>Contoh nominal transfer</span>
+                <strong>Rp {{ substr(number_format($exampleFee + 123, 0, ',', '.'), 0, -3) }}<em>123</em></strong>
                 <small>Tiga digit terakhir menjadi penanda pembayaran atas nama Anda.</small>
             </div>
         </div>
@@ -236,10 +233,10 @@
                     <select id="branch" name="branch" required>
                         <option value="">Pilih cabang lomba</option>
                         @foreach ($branchConfig as $key => $branch)
-                            @if ($branch['open'])
+                            @if (isset($openCatalogue[$key]))
                                 <option value="{{ $key }}" @selected(old('branch') === $key)>{{ $branch['label'] }}</option>
                             @else
-                                <option value="{{ $key }}" disabled>{{ $branch['label'] }} (segera dibuka)</option>
+                                <option value="{{ $key }}" disabled>{{ $branch['label'] }} (ditutup)</option>
                             @endif
                         @endforeach
                     </select>
@@ -250,7 +247,7 @@
                     <select id="category" name="category" required data-selected="{{ old('category') }}">
                         <option value="">Pilih cabang lomba terlebih dahulu</option>
                     </select>
-                    <small class="field-hint">MTQ Tilawah: Anak (SD/MI s.d. kelas 8 SMP/MTs), Remaja (kelas 9 SMP/MTs s.d. kelas 12 SMA/MA), Dewasa (mahasiswa s.d. usia maks. 41 tahun). MHQ Juz 30: SD/MI. Murottal Tartil Anak: SD/MI s.d. kelas 8 SMP/MTs.</small>
+                    <small class="field-hint">Pilih kategori sesuai jenjang sekolah/usia peserta. Panitia memverifikasi kesesuaiannya.</small>
                     @error('category') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
             </div>
@@ -299,7 +296,7 @@
 
     @if ($period['status'] === 'open')
         <script>
-            const branchConfig = {{ Js::from($branchConfig) }};
+            const branchConfig = {{ Js::from($openCatalogue) }};
             const branchSelect = document.getElementById('branch');
             const categorySelect = document.getElementById('category');
             const feeAmount = document.getElementById('fee-amount');
