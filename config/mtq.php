@@ -33,13 +33,6 @@ return [
                 'anak-anak' => ['label' => 'Anak', 'description' => 'Tingkat SD', 'fee' => 35000],
             ],
         ],
-        'pildacil' => [
-            'label' => 'Pildacil (Da’i Cilik)',
-            'open' => true,
-            'categories' => [
-                'anak-anak' => ['label' => 'Anak', 'description' => 'Tingkat SD', 'fee' => 35000],
-            ],
-        ],
         'murottal' => [
             'label' => 'Murottal',
             'open' => true,

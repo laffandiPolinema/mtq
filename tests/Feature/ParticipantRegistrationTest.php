@@ -84,7 +84,6 @@ class ParticipantRegistrationTest extends TestCase
             ['tilawah', 'remaja', 50000],
             ['tilawah', 'dewasa', 70000],
             ['mhq', 'anak-anak', 35000],
-            ['pildacil', 'anak-anak', 35000],
             ['murottal', 'anak-anak', 35000],
         ];
 
