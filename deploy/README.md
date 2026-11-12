@@ -37,19 +37,13 @@ Setelah selesai, website bisa dibuka lewat `http://IP-SERVER`.
 
 ## 2. Buat akun panitia
 
-**Cara A: lewat seeder.** Isi akun admin di `/var/www/mtq/.env`:
+**Cara A: lewat seeder** (akun bawaan dari `config/mtq.php`):
 
 ```sh
-sudo -u mtq nano /var/www/mtq/.env
-# MTQ_ADMIN_EMAIL=email-admin@contoh.id
-# MTQ_ADMIN_PASSWORD=kata-sandi-minimal-12-karakter
+cd /var/www/mtq && sudo -u mtq php artisan db:seed --force
 ```
 
-lalu jalankan:
-
-```sh
-cd /var/www/mtq && sudo -u mtq php artisan optimize && sudo -u mtq php artisan db:seed --force
-```
+Untuk memakai email/password lain tanpa mengubah kode, tambahkan `MTQ_ADMIN_EMAIL` dan `MTQ_ADMIN_PASSWORD` di `/var/www/mtq/.env`, jalankan `sudo -u mtq php artisan optimize`, lalu jalankan seeder lagi.
 
 **Cara B: interaktif**, misalnya untuk menambah akun panitia lain:
 

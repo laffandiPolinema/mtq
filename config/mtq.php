@@ -81,15 +81,15 @@ return [
     | Akun Admin Awal
     |--------------------------------------------------------------------------
     |
-    | Dipakai oleh AdminUserSeeder (php artisan db:seed). Isi di .env, jangan
-    | ditulis di kode karena repository bersifat publik.
+    | Dipakai oleh AdminUserSeeder (php artisan db:seed). Nilai bawaan dapat
+    | diganti lewat MTQ_ADMIN_EMAIL dan MTQ_ADMIN_PASSWORD di .env.
     |
     */
 
     'admin' => [
         'name' => env('MTQ_ADMIN_NAME', 'Admin MTQ 2026'),
-        'email' => env('MTQ_ADMIN_EMAIL'),
-        'password' => env('MTQ_ADMIN_PASSWORD'),
+        'email' => env('MTQ_ADMIN_EMAIL', 'adminmtq2026@gmail.com'),
+        'password' => env('MTQ_ADMIN_PASSWORD', 'punyaadminmtq2026'),
     ],
 
     'address' => 'Masjid Jami’ Blimbing, Jl. Ahmad Yani No.55, Blimbing, Kota Malang 65126',

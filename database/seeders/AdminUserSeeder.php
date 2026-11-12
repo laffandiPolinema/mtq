@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 class AdminUserSeeder extends Seeder
 {
     /**
-     * Buat atau perbarui akun admin dari MTQ_ADMIN_EMAIL dan MTQ_ADMIN_PASSWORD di .env.
+     * Buat atau perbarui akun admin (config/mtq.php, dapat diganti lewat .env).
      */
     public function run(): void
     {

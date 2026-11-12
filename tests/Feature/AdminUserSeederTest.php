@@ -32,7 +32,17 @@ class AdminUserSeederTest extends TestCase
         $this->assertAuthenticated();
     }
 
-    public function test_no_admin_is_created_without_credentials_in_the_environment(): void
+    public function test_default_admin_account_is_seeded_without_environment_overrides(): void
+    {
+        $this->seed(AdminUserSeeder::class);
+
+        $this->post(route('admin.login'), [
+            'email' => 'adminmtq2026@gmail.com',
+            'password' => 'punyaadminmtq2026',
+        ])->assertRedirect(route('admin.participants.index'));
+    }
+
+    public function test_no_admin_is_created_when_credentials_are_emptied_or_too_short(): void
     {
         config(['mtq.admin.email' => null, 'mtq.admin.password' => null]);
         $this->seed(AdminUserSeeder::class);
