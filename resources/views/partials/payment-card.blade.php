@@ -46,11 +46,9 @@
                 <span><strong>Unggah bukti transfer</strong><small data-file-label>JPG, PNG, WEBP, atau PDF · maks. 5 MB</small></span>
                 <input id="payment_proof" name="payment_proof" type="file" data-max-mb="5" data-label="Bukti transfer" accept="image/jpeg,image/png,image/webp,application/pdf" required>
             </label>
-            @error('payment_proof') <small class="field-error">{{ $message }}</small> @enderror
             <button class="button button-primary" type="submit">Kirim bukti pembayaran <span aria-hidden="true">→</span></button>
         </form>
     @else
-        @error('payment_proof') <small class="field-error">{{ $message }}</small> @enderror
         <p class="result-note">
             @if ($participant->payment_status === 'verified')
                 Pembayaran telah dikonfirmasi panitia{{ $participant->payment_verified_at ? ' pada '.$participant->payment_verified_at->translatedFormat('d F Y') : '' }}. Jazākumullāhu khairan.

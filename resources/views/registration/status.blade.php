@@ -39,13 +39,10 @@
                         </label>
                         <label class="upload-drop" for="photo">
                             <span class="upload-icon" aria-hidden="true">⬆</span>
-                            <span><strong>Ganti pasfoto 3x4</strong><small data-file-label>JPG, PNG · maks. 2 MB</small></span>
+                            <span><strong>Ganti pasfoto</strong><small data-file-label>JPG, PNG · maks. 2 MB</small></span>
                             <input id="photo" name="photo" type="file" data-max-mb="2" data-label="Pasfoto" accept="image/jpeg,image/png,image/webp">
                         </label>
                     </div>
-                    @foreach (['documents', 'identity_document', 'photo'] as $field)
-                        @error($field) <small class="field-error">{{ $message }}</small> @enderror
-                    @endforeach
                     <button class="button button-primary" type="submit">Kirim dokumen perbaikan</button>
                 </form>
             @elseif ($participant->status === 'pending')

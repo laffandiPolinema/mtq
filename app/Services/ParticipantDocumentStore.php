@@ -64,7 +64,7 @@ class ParticipantDocumentStore
             'identity_document.mimes' => 'Identitas diri harus berupa gambar (JPG, PNG, WEBP) atau PDF.',
             'identity_document.extensions' => 'Identitas diri harus berupa gambar (JPG, PNG, WEBP) atau PDF.',
             'identity_document.max' => 'Ukuran file identitas maksimal 5 MB.',
-            'photo.required' => 'Unggah pasfoto terbaru ukuran 3x4.',
+            'photo.required' => 'Unggah pasfoto terbaru.',
             'photo.mimes' => 'Pasfoto harus berupa gambar JPG, PNG, atau WEBP.',
             'photo.extensions' => 'Pasfoto harus berupa gambar JPG, PNG, atau WEBP.',
             'photo.max' => 'Ukuran pasfoto maksimal 2 MB.',
@@ -72,6 +72,9 @@ class ParticipantDocumentStore
             'payment_proof.mimes' => 'Bukti transfer harus berupa gambar (JPG, PNG, WEBP) atau PDF.',
             'payment_proof.extensions' => 'Bukti transfer harus berupa gambar (JPG, PNG, WEBP) atau PDF.',
             'payment_proof.max' => 'Ukuran file bukti transfer maksimal 5 MB.',
+            'identity_document.uploaded' => 'File identitas diri gagal diunggah. Pastikan ukurannya maksimal 5 MB.',
+            'photo.uploaded' => 'Pasfoto gagal diunggah. Pastikan ukurannya maksimal 2 MB.',
+            'payment_proof.uploaded' => 'Bukti transfer gagal diunggah. Pastikan ukurannya maksimal 5 MB.',
             'uploaded' => 'File gagal diunggah. Pastikan ukurannya sesuai batas.',
         ];
     }

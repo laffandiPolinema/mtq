@@ -189,7 +189,7 @@
                     @error('gender') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
                 <div class="field">
-                    <label for="district">Kecamatan domisili (Kota Malang) <span>*</span></label>
+                    <label for="district">Kecamatan domisili <span>*</span></label>
                     <select id="district" name="district" required>
                         <option value="">Pilih kecamatan</option>
                         @foreach ($districts as $district)
@@ -258,18 +258,16 @@
                 <div class="field">
                     <label class="upload-drop" for="identity_document">
                         <span class="upload-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 5h18v14H3zm2 2v10h14V7zm2 2h4v4H7zm6 0h4v1.5h-4zm0 3h4v1.5h-4zm-6 3h10v1.5H7z" fill="currentColor"/></svg></span>
-                        <span><strong>Identitas diri <span class="required">*</span></strong><small data-file-label>KTP / Kartu Keluarga (bukti domisili Kota Malang), atau Kartu Pelajar / KIA · JPG, PNG, PDF · maks. 5 MB</small></span>
+                        <span><strong>Identitas diri <span class="required">*</span></strong><small data-file-label>KTP / Kartu Keluarga / Kartu Pelajar / KIA · JPG, PNG, PDF · maks. 5 MB</small></span>
                         <input id="identity_document" name="identity_document" type="file" data-max-mb="5" data-label="Identitas diri" accept="image/jpeg,image/png,image/webp,application/pdf" required>
                     </label>
-                    @error('identity_document') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
                 <div class="field">
                     <label class="upload-drop" for="photo">
                         <span class="upload-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-4 0-8 2-8 5v1h16v-1c0-3-4-5-8-5z" fill="currentColor"/></svg></span>
-                        <span><strong>Pasfoto terbaru 3x4 <span class="required">*</span></strong><small data-file-label>JPG, PNG, WEBP · maks. 2 MB</small></span>
+                        <span><strong>Pasfoto terbaru <span class="required">*</span></strong><small data-file-label>JPG, PNG, WEBP · maks. 2 MB</small></span>
                         <input id="photo" name="photo" type="file" data-max-mb="2" data-label="Pasfoto" accept="image/jpeg,image/png,image/webp" required>
                     </label>
-                    @error('photo') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
             </div>
             @if ($errors->any())

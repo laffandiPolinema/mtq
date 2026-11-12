@@ -48,6 +48,7 @@ class Participant extends Model
         'Klojen',
         'Lowokwaru',
         'Sukun',
+        'Lain-lain',
     ];
 
     public const STATUSES = [
@@ -68,7 +69,7 @@ class Participant extends Model
      */
     public const DOCUMENTS = [
         'identity_document_path' => 'Identitas diri (KTP/Kartu Keluarga/Kartu Pelajar/KIA)',
-        'photo_path' => 'Pasfoto 3x4',
+        'photo_path' => 'Pasfoto terbaru',
         'payment_proof_path' => 'Bukti pembayaran',
     ];
 
