@@ -21,6 +21,7 @@ class ParticipantRegistrationTest extends TestCase
         parent::setUp();
 
         // Tanggal di dalam masa pendaftaran (7 November – 24 Desember 2026).
+        Storage::fake('local');
         $this->travelTo(Carbon::parse('2026-11-20 10:00:00'));
     }
 
@@ -191,16 +192,18 @@ class ParticipantRegistrationTest extends TestCase
     {
         return [
             'full_name' => 'Siti Aminah',
-            'gender' => 'female',
-            'birth_place' => 'Malang',
+            'nik' => fake()->unique()->numerify('3573############'),
             'birth_date' => '2008-05-10',
+            'gender' => 'female',
             'district' => 'Blimbing',
             'address' => 'Jl. Ahmad Yani, Malang',
-            'institution' => 'SMP Negeri',
             'phone' => '081234567890',
-            'email' => 'siti@example.test',
+            'institution' => 'SMP Negeri 5 Malang',
+            'school_address' => 'Jl. Pahlawan Trip, Malang',
             'branch' => 'tilawah',
             'category' => 'remaja',
+            'identity_document' => UploadedFile::fake()->image('kartu-pelajar.jpg', 800, 500),
+            'photo' => UploadedFile::fake()->image('pasfoto.jpg', 300, 400),
         ];
     }
 }

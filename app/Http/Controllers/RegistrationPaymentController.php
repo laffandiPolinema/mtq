@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Participant;
+use App\Services\ParticipantDocumentStore;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class RegistrationPaymentController extends Controller
 {
-    public function store(Request $request, string $code): RedirectResponse
+    public function store(Request $request, string $code, ParticipantDocumentStore $documents): RedirectResponse
     {
         $participant = Participant::where('registration_code', $code)->firstOrFail();
 
@@ -19,27 +19,32 @@ class RegistrationPaymentController extends Controller
             ]);
         }
 
-        $request->validate([
-            'payment_proof' => ['required', 'file', 'mimes:jpg,jpeg,png,webp,pdf', 'max:5120'],
-        ], [
-            'payment_proof.required' => 'Pilih file bukti transfer terlebih dahulu.',
-            'payment_proof.mimes' => 'Bukti transfer harus berupa gambar (JPG, PNG, WEBP) atau PDF.',
-            'payment_proof.max' => 'Ukuran file maksimal 5 MB.',
-            'payment_proof.uploaded' => 'File gagal diunggah. Pastikan ukurannya tidak lebih dari 5 MB.',
-        ]);
+        $request->validate(
+            ['payment_proof' => ParticipantDocumentStore::rules('payment_proof')],
+            ParticipantDocumentStore::messages(),
+        );
 
+        $hash = hash_file('sha256', $request->file('payment_proof')->getRealPath());
+
+        // Satu bukti transfer hanya sah untuk satu pendaftaran (mencegah bukti orang lain dipakai ulang).
+        if (Participant::where('payment_proof_hash', $hash)->whereKeyNot($participant->getKey())->exists()) {
+            return back()->withErrors([
+                'payment_proof' => 'Bukti transfer ini sudah pernah diunggah untuk pendaftaran lain. Unggah bukti transfer milik Anda sendiri.',
+            ]);
+        }
+
+        $stored = $documents->store($request->file('payment_proof'), 'payment-proofs', 'payment_proof');
         $previousProofPath = $participant->payment_proof_path;
 
         $participant->update([
-            'payment_proof_path' => $request->file('payment_proof')->store('payment-proofs', 'local'),
+            'payment_proof_path' => $stored['path'],
+            'payment_proof_hash' => $stored['hash'],
             'payment_status' => 'waiting',
             'payment_uploaded_at' => now(),
             'payment_note' => null,
         ]);
 
-        if ($previousProofPath !== null) {
-            Storage::disk('local')->delete($previousProofPath);
-        }
+        $documents->delete($previousProofPath);
 
         return redirect()
             ->route('status.show', $participant->registration_code)

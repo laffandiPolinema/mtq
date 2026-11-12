@@ -67,7 +67,9 @@ Selama ±1 menit situs menampilkan halaman maintenance, lalu kembali online, ter
 
 ## Backup
 
-- Otomatis setiap hari pukul 02.00 ke `/var/backups/mtq`, berisi dump database dan semua file bukti transfer. Backup lebih dari 14 hari dihapus otomatis.
+> **Penting — simpan `APP_KEY`.** NIK dan semua dokumen peserta (KTP/kartu pelajar, pasfoto, bukti transfer) disimpan **terenkripsi** dengan `APP_KEY` di `/var/www/mtq/.env`. Tanpa kunci ini, backup tidak bisa dibuka. Catat `APP_KEY` di tempat aman **terpisah dari file backup** (mis. password manager panitia), dan **jangan pernah mengganti `APP_KEY`** selama masa pendaftaran.
+
+- Otomatis setiap hari pukul 02.00 ke `/var/backups/mtq`, berisi dump database dan semua dokumen peserta (identitas, pasfoto, bukti transfer — tetap terenkripsi). Backup lebih dari 14 hari dihapus otomatis.
 - Manual: `sudo -u mtq bash /var/www/mtq/deploy/backup.sh`
 - Log backup: `/var/backups/mtq/backup.log`
 

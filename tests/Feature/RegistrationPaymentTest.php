@@ -21,6 +21,7 @@ class RegistrationPaymentTest extends TestCase
         parent::setUp();
 
         // Tanggal di dalam masa pendaftaran (7 November – 24 Desember 2026).
+        Storage::fake('local');
         $this->travelTo(Carbon::parse('2026-11-20 10:00:00'));
     }
 
@@ -138,7 +139,7 @@ class RegistrationPaymentTest extends TestCase
     {
         $participant = Participant::factory()->withPaymentProof()->create();
 
-        $this->get(route('admin.participants.payment-proof', $participant))->assertRedirect(route('login'));
+        $this->get(route('admin.participants.document', [$participant, 'bukti-pembayaran']))->assertRedirect(route('login'));
         $this->get(route('admin.participants.show', $participant))->assertRedirect(route('login'));
         $this->patch(route('admin.participants.payment', $participant), ['payment_status' => 'verified'])
             ->assertRedirect(route('login'));
@@ -163,7 +164,7 @@ class RegistrationPaymentTest extends TestCase
             ->assertSee($participant->formattedPaymentUniqueCode());
 
         $this->actingAs($admin)
-            ->get(route('admin.participants.payment-proof', $participant))
+            ->get(route('admin.participants.document', [$participant, 'bukti-pembayaran']))
             ->assertOk();
 
         $this->actingAs($admin)
@@ -279,16 +280,18 @@ class RegistrationPaymentTest extends TestCase
     {
         return [
             'full_name' => 'Siti Aminah',
-            'gender' => 'female',
-            'birth_place' => 'Malang',
+            'nik' => fake()->unique()->numerify('3573############'),
             'birth_date' => '2008-05-10',
+            'gender' => 'female',
             'district' => 'Blimbing',
             'address' => 'Jl. Ahmad Yani, Malang',
-            'institution' => 'SMP Negeri',
             'phone' => '081234567890',
-            'email' => 'siti@example.test',
+            'institution' => 'SMP Negeri 5 Malang',
+            'school_address' => 'Jl. Pahlawan Trip, Malang',
             'branch' => 'tilawah',
             'category' => 'remaja',
+            'identity_document' => UploadedFile::fake()->image('kartu-pelajar.jpg', 800, 500),
+            'photo' => UploadedFile::fake()->image('pasfoto.jpg', 300, 400),
         ];
     }
 }

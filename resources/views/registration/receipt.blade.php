@@ -103,10 +103,11 @@
                 <h2>Data peserta</h2>
                 <table>
                     <tr><td>Nama lengkap</td><td>{{ $participant->full_name }}</td></tr>
+                    <tr><td>NIK</td><td>{{ $participant->maskedNik() ?? '—' }}</td></tr>
+                    <tr><td>Tanggal lahir</td><td>{{ $participant->birth_date->translatedFormat('d F Y') }}</td></tr>
                     <tr><td>Jenis kelamin</td><td>{{ $participant->gender === 'male' ? 'Laki-laki' : 'Perempuan' }}</td></tr>
-                    <tr><td>Tempat, tgl lahir</td><td>{{ $participant->birth_place }}, {{ $participant->birth_date->translatedFormat('d F Y') }}</td></tr>
                     <tr><td>Kecamatan</td><td>{{ $participant->district }}</td></tr>
-                    <tr><td>Lembaga</td><td>{{ $participant->institution ?: '—' }}</td></tr>
+                    <tr><td>Asal sekolah</td><td>{{ $participant->institution ?: '—' }}</td></tr>
                     <tr><td>WhatsApp</td><td>{{ $participant->phone }}</td></tr>
                     <tr><td>Cabang lomba</td><td>{{ $participant->branchLabel() }}{{ $participant->categoryLabel() ? ' · '.$participant->categoryLabel() : '' }}</td></tr>
                     <tr><td>Status data</td><td><span class="pill pill-{{ $participant->status }}">{{ \App\Models\Participant::STATUSES[$participant->status] }}</span></td></tr>

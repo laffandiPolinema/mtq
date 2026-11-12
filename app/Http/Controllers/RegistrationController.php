@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Middleware\EnsureParticipantAccess;
 use App\Models\Participant;
+use App\Services\ParticipantDocumentStore;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,7 +27,7 @@ class RegistrationController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, ParticipantDocumentStore $documents): RedirectResponse
     {
         $period = $this->registrationPeriod();
 
@@ -40,42 +41,82 @@ class RegistrationController extends Controller
 
         $validated = $request->validate([
             'full_name' => ['required', 'string', 'max:255'],
-            'gender' => ['required', Rule::in(['male', 'female'])],
-            'birth_place' => ['required', 'string', 'max:100'],
+            'nik' => ['required', 'digits:16'],
             'birth_date' => ['required', 'date', 'before_or_equal:today'],
+            'gender' => ['required', Rule::in(['male', 'female'])],
             'district' => ['required', Rule::in(Participant::DISTRICTS)],
             'address' => ['required', 'string', 'max:2000'],
-            'institution' => ['nullable', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:25'],
-            'email' => ['nullable', 'email', 'max:255'],
+            'phone' => ['required', 'string', 'regex:/^(\+?62|0)8[\d\s-]{7,15}$/'],
+            'institution' => ['required', 'string', 'max:255'],
+            'school_address' => ['required', 'string', 'max:2000'],
             'branch' => ['required', Rule::in(array_keys(Participant::openBranches()))],
             'category' => [
                 'required',
                 Rule::in(array_keys(Participant::categoriesFor((string) $request->input('branch')))),
             ],
+            'identity_document' => ParticipantDocumentStore::rules('identity_document'),
+            'photo' => ParticipantDocumentStore::rules('photo'),
         ], [
             'required' => 'Kolom :attribute wajib diisi.',
-            'email' => 'Masukkan alamat email yang valid.',
+            'nik.digits' => 'NIK harus terdiri dari 16 digit angka.',
+            'phone.regex' => 'Masukkan nomor WhatsApp yang valid, contoh 081234567890.',
             'date' => 'Format tanggal lahir tidak valid.',
             'before_or_equal' => ':attribute tidak boleh melebihi hari ini.',
             'in' => 'Pilihan :attribute tidak valid.',
             'max.string' => ':attribute maksimal :max karakter.',
+            ...ParticipantDocumentStore::messages(),
         ], [
             'full_name' => 'nama lengkap',
-            'gender' => 'jenis kelamin',
-            'birth_place' => 'tempat lahir',
+            'nik' => 'NIK',
             'birth_date' => 'tanggal lahir',
+            'gender' => 'jenis kelamin',
             'district' => 'kecamatan',
-            'address' => 'alamat',
-            'institution' => 'lembaga',
+            'address' => 'alamat domisili',
             'phone' => 'nomor WhatsApp',
+            'institution' => 'asal sekolah/madrasah/lembaga',
+            'school_address' => 'alamat sekolah',
             'branch' => 'cabang lomba',
             'category' => 'kategori',
         ]);
 
-        $participant = null;
+        $this->ensureNikNotRegistered($validated['nik']);
 
-        for ($attempt = 1; $participant === null; $attempt++) {
+        $identity = $documents->store($request->file('identity_document'), 'identity-documents', 'identity_document');
+
+        try {
+            $photo = $documents->store($request->file('photo'), 'photos', 'photo', passPhoto: true);
+        } catch (\Throwable $exception) {
+            $documents->delete($identity['path']);
+
+            throw $exception;
+        }
+
+        unset($validated['identity_document'], $validated['photo']);
+        $validated['identity_document_path'] = $identity['path'];
+        $validated['photo_path'] = $photo['path'];
+
+        try {
+            $participant = $this->createParticipant($validated);
+        } catch (\Throwable $exception) {
+            // Pendaftaran gagal: jangan tinggalkan dokumen tanpa pemilik di storage.
+            $documents->delete($identity['path']);
+            $documents->delete($photo['path']);
+            $this->ensureNikNotRegistered($validated['nik']);
+
+            throw $exception;
+        }
+
+        EnsureParticipantAccess::grant($request, $participant->registration_code);
+
+        return redirect()->route('registration.success', $participant->registration_code);
+    }
+
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    private function createParticipant(array $attributes): Participant
+    {
+        for ($attempt = 1; ; $attempt++) {
             $uniqueCode = $this->availablePaymentUniqueCode();
 
             if ($uniqueCode === null) {
@@ -85,22 +126,31 @@ class RegistrationController extends Controller
             }
 
             try {
-                $participant = Participant::create([
-                    ...$validated,
+                return Participant::create([
+                    ...$attributes,
                     'registration_code' => $this->newRegistrationCode(),
-                    'registration_fee' => Participant::feeFor($validated['branch'], $validated['category']),
+                    'registration_fee' => Participant::feeFor($attributes['branch'], $attributes['category']),
                     'payment_unique_code' => $uniqueCode,
                 ]);
             } catch (UniqueConstraintViolationException $exception) {
-                if ($attempt >= 5) {
+                // Kode unik/kode pendaftaran bentrok dengan pendaftar lain yang bersamaan: coba lagi.
+                if ($attempt >= 5 || Participant::where('nik_hash', Participant::nikHash($attributes['nik']))->exists()) {
                     throw $exception;
                 }
             }
         }
+    }
 
-        EnsureParticipantAccess::grant($request, $participant->registration_code);
-
-        return redirect()->route('registration.success', $participant->registration_code);
+    /**
+     * Setiap peserta (NIK) hanya boleh mengikuti satu cabang lomba.
+     */
+    private function ensureNikNotRegistered(string $nik): void
+    {
+        if (Participant::where('nik_hash', Participant::nikHash($nik))->exists()) {
+            throw ValidationException::withMessages([
+                'nik' => 'NIK ini sudah terdaftar. Setiap peserta hanya dapat mengikuti satu cabang lomba. Hubungi panitia jika perlu mengganti cabang.',
+            ]);
+        }
     }
 
     /**

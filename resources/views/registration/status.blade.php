@@ -21,8 +21,33 @@
                 <div><dt>Tanggal daftar</dt><dd>{{ $participant->created_at->translatedFormat('d F Y') }}</dd></div>
                 <div><dt>Pembayaran</dt><dd>{{ $participant->paymentStatusLabel() }}</dd></div>
             </dl>
+            <ul class="document-list">
+                @foreach (\App\Models\Participant::DOCUMENTS as $column => $label)
+                    <li><span>{{ $label }}</span>@if ($participant->{$column})<b>✓ Terunggah</b>@else<b class="missing">Belum</b>@endif</li>
+                @endforeach
+            </ul>
+
             @if ($participant->status === 'rejected')
-                <p class="result-note">Data Anda perlu diperbaiki. Silakan hubungi panitia melalui kontak di bagian bawah halaman ini.</p>
+                <div class="notice notice-danger"><strong>Perlu perbaikan:</strong> {{ $participant->status_note ?: 'Silakan hubungi panitia melalui kontak di bagian bawah halaman ini.' }}</div>
+                <form class="upload-form" action="{{ route('registration.documents.update', $participant->registration_code) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="upload-grid">
+                        <label class="upload-drop" for="identity_document">
+                            <span class="upload-icon" aria-hidden="true">⬆</span>
+                            <span><strong>Ganti identitas diri</strong><small data-file-label>JPG, PNG, PDF · maks. 5 MB</small></span>
+                            <input id="identity_document" name="identity_document" type="file" accept="image/jpeg,image/png,image/webp,application/pdf">
+                        </label>
+                        <label class="upload-drop" for="photo">
+                            <span class="upload-icon" aria-hidden="true">⬆</span>
+                            <span><strong>Ganti pasfoto 3x4</strong><small data-file-label>JPG, PNG · maks. 2 MB</small></span>
+                            <input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp">
+                        </label>
+                    </div>
+                    @foreach (['documents', 'identity_document', 'photo'] as $field)
+                        @error($field) <small class="field-error">{{ $message }}</small> @enderror
+                    @endforeach
+                    <button class="button button-primary" type="submit">Kirim dokumen perbaikan</button>
+                </form>
             @elseif ($participant->status === 'pending')
                 <p class="result-note">Panitia sedang memeriksa data Anda. Periksa kembali status ini secara berkala.</p>
             @else

@@ -156,9 +156,9 @@
                 <a class="button button-outline" href="{{ route('status.form') }}">Cek status pendaftaran</a>
             </div>
         @else
-        <form class="registration-form" action="{{ route('registration.store') }}" method="POST">
+        <form class="registration-form" action="{{ route('registration.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
-            <div class="form-heading"><span class="step-badge">01</span><div><h3>Data peserta</h3><p>Informasi dasar calon peserta</p></div></div>
+            <div class="form-heading"><span class="step-badge">01</span><div><h3>Data peserta</h3><p>Sesuai dokumen identitas</p></div></div>
 
             <div class="field-grid">
                 <div class="field field-wide">
@@ -166,10 +166,11 @@
                     <input id="full_name" name="full_name" type="text" value="{{ old('full_name') }}" placeholder="Nama sesuai identitas" autocomplete="name" required>
                     @error('full_name') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
-                <div class="field">
-                    <label for="birth_place">Tempat lahir <span>*</span></label>
-                    <input id="birth_place" name="birth_place" type="text" value="{{ old('birth_place') }}" placeholder="Kota kelahiran" required>
-                    @error('birth_place') <small class="field-error">{{ $message }}</small> @enderror
+                <div class="field field-wide">
+                    <label for="nik">NIK <span>*</span></label>
+                    <input id="nik" name="nik" type="text" inputmode="numeric" pattern="\d{16}" maxlength="16" value="{{ old('nik') }}" placeholder="16 digit sesuai KK/KTP/KIA" autocomplete="off" required>
+                    <small class="field-hint">Satu NIK hanya dapat mengikuti satu cabang lomba. NIK disimpan terenkripsi.</small>
+                    @error('nik') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
                 <div class="field">
                     <label for="birth_date">Tanggal lahir <span>*</span></label>
@@ -186,7 +187,7 @@
                     @error('gender') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
                 <div class="field">
-                    <label for="district">Kecamatan domisili <span>*</span></label>
+                    <label for="district">Kecamatan domisili (Kota Malang) <span>*</span></label>
                     <select id="district" name="district" required>
                         <option value="">Pilih kecamatan</option>
                         @foreach ($districts as $district)
@@ -195,30 +196,35 @@
                     </select>
                     @error('district') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
-                <div class="field field-wide">
-                    <label for="address">Alamat domisili <span>*</span></label>
-                    <textarea id="address" name="address" rows="2" placeholder="Jalan, kelurahan, dan kode pos" required>{{ old('address') }}</textarea>
-                    @error('address') <small class="field-error">{{ $message }}</small> @enderror
-                </div>
-                <div class="field">
-                    <label for="institution">Lembaga / sekolah <small>Opsional</small></label>
-                    <input id="institution" name="institution" type="text" value="{{ old('institution') }}" placeholder="Nama lembaga">
-                    @error('institution') <small class="field-error">{{ $message }}</small> @enderror
-                </div>
                 <div class="field">
                     <label for="phone">Nomor WhatsApp <span>*</span></label>
                     <input id="phone" name="phone" type="tel" value="{{ old('phone') }}" placeholder="08xxxxxxxxxx" autocomplete="tel" required>
                     @error('phone') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
                 <div class="field field-wide">
-                    <label for="email">Email <small>Opsional</small></label>
-                    <input id="email" name="email" type="email" value="{{ old('email') }}" placeholder="nama@email.com" autocomplete="email">
-                    @error('email') <small class="field-error">{{ $message }}</small> @enderror
+                    <label for="address">Alamat domisili <span>*</span></label>
+                    <textarea id="address" name="address" rows="2" placeholder="Jalan, RT/RW, kelurahan" required>{{ old('address') }}</textarea>
+                    @error('address') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
             </div>
 
             <div class="form-divider"></div>
-            <div class="form-heading"><span class="step-badge">02</span><div><h3>Pilihan lomba</h3><p>Pilih satu cabang untuk diikuti</p></div></div>
+            <div class="form-heading"><span class="step-badge">02</span><div><h3>Asal sekolah / lembaga</h3><p>Sekolah, madrasah, TPQ, atau lembaga yang diwakili</p></div></div>
+            <div class="field-grid">
+                <div class="field field-wide">
+                    <label for="institution">Asal sekolah / madrasah / lembaga <span>*</span></label>
+                    <input id="institution" name="institution" type="text" value="{{ old('institution') }}" placeholder="Mis. MI Al-Ikhlas / TPQ Nurul Huda" required>
+                    @error('institution') <small class="field-error">{{ $message }}</small> @enderror
+                </div>
+                <div class="field field-wide">
+                    <label for="school_address">Alamat sekolah / lembaga <span>*</span></label>
+                    <textarea id="school_address" name="school_address" rows="2" placeholder="Alamat lengkap sekolah/lembaga" required>{{ old('school_address') }}</textarea>
+                    @error('school_address') <small class="field-error">{{ $message }}</small> @enderror
+                </div>
+            </div>
+
+            <div class="form-divider"></div>
+            <div class="form-heading"><span class="step-badge">03</span><div><h3>Pilihan lomba</h3><p>Setiap peserta hanya dapat mengikuti 1 cabang</p></div></div>
             <div class="field-grid">
                 <div class="field field-wide">
                     <label for="branch">Cabang perlombaan <span>*</span></label>
@@ -243,6 +249,31 @@
                     @error('category') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
             </div>
+
+            <div class="form-divider"></div>
+            <div class="form-heading"><span class="step-badge">04</span><div><h3>Dokumen persyaratan</h3><p>Disimpan terenkripsi, hanya dapat dibuka panitia</p></div></div>
+            <div class="upload-grid">
+                <div class="field">
+                    <label class="upload-drop" for="identity_document">
+                        <span class="upload-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 5h18v14H3zm2 2v10h14V7zm2 2h4v4H7zm6 0h4v1.5h-4zm0 3h4v1.5h-4zm-6 3h10v1.5H7z" fill="currentColor"/></svg></span>
+                        <span><strong>Identitas diri <span class="required">*</span></strong><small data-file-label>KTP / Kartu Pelajar / KIA / Akta Kelahiran · JPG, PNG, PDF · maks. 5 MB</small></span>
+                        <input id="identity_document" name="identity_document" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" required>
+                    </label>
+                    @error('identity_document') <small class="field-error">{{ $message }}</small> @enderror
+                </div>
+                <div class="field">
+                    <label class="upload-drop" for="photo">
+                        <span class="upload-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-4 0-8 2-8 5v1h16v-1c0-3-4-5-8-5z" fill="currentColor"/></svg></span>
+                        <span><strong>Pasfoto terbaru 3x4 <span class="required">*</span></strong><small data-file-label>Posisi tegak · JPG, PNG · maks. 2 MB</small></span>
+                        <input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" required>
+                    </label>
+                    @error('photo') <small class="field-error">{{ $message }}</small> @enderror
+                </div>
+            </div>
+            @if ($errors->any())
+                <p class="field-hint">Jika ada isian yang salah, pilih ulang kedua file dokumen sebelum mengirim kembali.</p>
+            @endif
+            <p class="field-hint"><strong>Bukti pembayaran</strong> diunggah setelah formulir terkirim, karena nominal transfer (dengan kode unik) baru diberikan setelah mendaftar.</p>
 
             <div class="form-divider"></div>
             <div class="fee-summary">

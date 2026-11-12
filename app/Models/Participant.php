@@ -6,27 +6,35 @@ use Database\Factories\ParticipantFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
     'registration_code',
     'full_name',
+    'nik',
     'gender',
     'birth_place',
     'birth_date',
     'district',
     'address',
     'institution',
+    'school_address',
     'phone',
     'email',
     'branch',
     'category',
     'status',
+    'status_note',
+    'identity_document_path',
+    'photo_path',
     'registration_fee',
     'payment_unique_code',
     'payment_status',
     'payment_proof_path',
+    'payment_proof_hash',
     'payment_uploaded_at',
     'payment_verified_at',
+    'payment_verified_by',
     'payment_note',
 ])]
 class Participant extends Model
@@ -55,9 +63,54 @@ class Participant extends Model
         'rejected' => 'Bukti ditolak',
     ];
 
+    /**
+     * Dokumen persyaratan yang diunggah peserta: kolom path => label.
+     */
+    public const DOCUMENTS = [
+        'identity_document_path' => 'Identitas diri (KTP/Kartu Pelajar/KIA/Akta)',
+        'photo_path' => 'Pasfoto 3x4',
+        'payment_proof_path' => 'Bukti pembayaran',
+    ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (Participant $participant): void {
+            if ($participant->isDirty('nik')) {
+                $participant->nik_hash = $participant->nik === null ? null : self::nikHash($participant->nik);
+            }
+        });
+    }
+
+    /**
+     * Sidik NIK (HMAC dengan APP_KEY) untuk pencarian dan keunikan tanpa menyimpan NIK apa adanya.
+     */
+    public static function nikHash(string $nik): string
+    {
+        return hash_hmac('sha256', preg_replace('/\D/', '', $nik), (string) config('app.key'));
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function paymentVerifier(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'payment_verified_by');
+    }
+
+    public function maskedNik(): ?string
+    {
+        return $this->nik === null ? null : substr($this->nik, 0, 4).str_repeat('•', 8).substr($this->nik, -4);
+    }
+
+    public function canReplaceDocuments(): bool
+    {
+        return $this->status === 'rejected';
+    }
+
     protected function casts(): array
     {
         return [
+            'nik' => 'encrypted',
             'birth_date' => 'date',
             'registration_fee' => 'integer',
             'payment_unique_code' => 'integer',
@@ -170,8 +223,8 @@ class Participant extends Model
         return in_array($this->payment_status, ['unpaid', 'rejected'], true);
     }
 
-    public function paymentProofIsPdf(): bool
+    public function documentIsPdf(string $column): bool
     {
-        return str_ends_with(strtolower((string) $this->payment_proof_path), '.pdf');
+        return str_contains(strtolower((string) $this->{$column}), '.pdf');
     }
 }

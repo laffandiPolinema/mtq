@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Participant;
+use App\Services\ParticipantDocumentStore;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminParticipantController extends Controller
@@ -51,8 +52,9 @@ class AdminParticipantController extends Controller
             // BOM agar Excel membaca UTF-8 (nama dengan tanda ’ dll.) dengan benar.
             fwrite($output, "\xEF\xBB\xBF");
             fputcsv($output, [
-                'No', 'Kode Pendaftaran', 'Nama Lengkap', 'Jenis Kelamin', 'Tempat Lahir', 'Tanggal Lahir',
-                'Kecamatan', 'Alamat', 'Lembaga', 'WhatsApp', 'Email', 'Cabang', 'Kategori',
+                'No', 'Kode Pendaftaran', 'Nama Lengkap', 'NIK', 'Jenis Kelamin', 'Tanggal Lahir',
+                'Kecamatan', 'Alamat Domisili', 'WhatsApp', 'Asal Sekolah/Lembaga', 'Alamat Sekolah', 'Cabang', 'Kategori',
+                'Dokumen Identitas', 'Pasfoto',
                 'Biaya Pendaftaran', 'Kode Unik', 'Total Transfer', 'Status Pembayaran',
                 'Tanggal Unggah Bukti', 'Tanggal Lunas', 'Catatan Pembayaran', 'Status Data', 'Tanggal Daftar',
             ], ';', escape: '');
@@ -62,17 +64,19 @@ class AdminParticipantController extends Controller
                     $index + 1,
                     $participant->registration_code,
                     $this->csvText($participant->full_name),
+                    // Ditulis sebagai ="…" agar Excel tidak membuang angka 0 di depan atau mengubahnya jadi 3,57E+15.
+                    $participant->nik === null ? null : '="'.preg_replace('/\D/', '', $participant->nik).'"',
                     $participant->gender === 'male' ? 'Laki-laki' : 'Perempuan',
-                    $this->csvText($participant->birth_place),
                     $participant->birth_date->format('d/m/Y'),
                     $participant->district,
                     $this->csvText($participant->address),
-                    $this->csvText($participant->institution),
-                    // Ditulis sebagai ="08…" agar Excel tidak membuang angka 0 di depan.
                     '="'.preg_replace('/[^\d+]/', '', $participant->phone).'"',
-                    $this->csvText($participant->email),
+                    $this->csvText($participant->institution),
+                    $this->csvText($participant->school_address),
                     $participant->branchLabel(),
                     $participant->categoryLabel(),
+                    $participant->identity_document_path ? 'Ada' : 'Belum',
+                    $participant->photo_path ? 'Ada' : 'Belum',
                     $participant->registration_fee,
                     $participant->formattedPaymentUniqueCode(),
                     $participant->paymentAmount(),
@@ -99,8 +103,13 @@ class AdminParticipantController extends Controller
 
     public function show(Participant $participant): View
     {
+        $duplicateProofOwners = $participant->payment_proof_hash === null
+            ? collect()
+            : Participant::where('payment_proof_hash', $participant->payment_proof_hash)->whereKeyNot($participant->getKey())->get();
+
         return view('admin.participants.show', [
-            'participant' => $participant,
+            'participant' => $participant->load('paymentVerifier'),
+            'duplicateProofOwners' => $duplicateProofOwners,
             'statuses' => Participant::STATUSES,
             'paymentStatuses' => Participant::PAYMENT_STATUSES,
         ]);
@@ -110,9 +119,15 @@ class AdminParticipantController extends Controller
     {
         $validated = $request->validate([
             'status' => ['required', Rule::in(array_keys(Participant::STATUSES))],
+            'status_note' => ['nullable', 'required_if:status,rejected', 'string', 'max:500'],
+        ], [
+            'status_note.required_if' => 'Tuliskan bagian yang perlu diperbaiki peserta (mis. pasfoto buram).',
         ]);
 
-        $participant->update($validated);
+        $participant->update([
+            'status' => $validated['status'],
+            'status_note' => $validated['status'] === 'rejected' ? $validated['status_note'] : null,
+        ]);
 
         return back()->with('success', 'Status peserta berhasil diperbarui.');
     }
@@ -134,6 +149,7 @@ class AdminParticipantController extends Controller
             'payment_status' => $validated['payment_status'],
             'payment_note' => $validated['payment_status'] === 'rejected' ? $validated['payment_note'] : null,
             'payment_verified_at' => $validated['payment_status'] === 'verified' ? now() : null,
+            'payment_verified_by' => $request->user()->getKey(),
         ]);
 
         return back()->with('success', $validated['payment_status'] === 'verified'
@@ -141,12 +157,12 @@ class AdminParticipantController extends Controller
             : 'Bukti pembayaran ditolak. Peserta dapat mengunggah ulang.');
     }
 
-    public function destroy(Participant $participant): RedirectResponse
+    public function destroy(Participant $participant, ParticipantDocumentStore $documents): RedirectResponse
     {
         $participant->delete();
 
-        if ($participant->payment_proof_path !== null) {
-            Storage::disk('local')->delete($participant->payment_proof_path);
+        foreach (array_keys(Participant::DOCUMENTS) as $column) {
+            $documents->delete($participant->{$column});
         }
 
         return redirect()
@@ -154,11 +170,16 @@ class AdminParticipantController extends Controller
             ->with('success', "Data peserta {$participant->full_name} ({$participant->registration_code}) berhasil dihapus.");
     }
 
-    public function paymentProof(Participant $participant): StreamedResponse
+    /**
+     * Tampilkan dokumen peserta (didekripsi) khusus untuk panitia yang login.
+     */
+    public function document(Participant $participant, string $document, ParticipantDocumentStore $documents): Response
     {
-        abort_if($participant->payment_proof_path === null || ! Storage::disk('local')->exists($participant->payment_proof_path), 404);
+        $column = ['identitas' => 'identity_document_path', 'pasfoto' => 'photo_path', 'bukti-pembayaran' => 'payment_proof_path'][$document] ?? null;
 
-        return Storage::disk('local')->response($participant->payment_proof_path);
+        abort_if($column === null || $participant->{$column} === null, 404);
+
+        return $documents->response($participant->{$column}, "{$document}-{$participant->registration_code}");
     }
 
     /**
@@ -185,6 +206,7 @@ class AdminParticipantController extends Controller
             ->when($filters['search'] ?? null, function ($query, string $search): void {
                 $query->where(function ($query) use ($search): void {
                     $query->where('full_name', 'like', "%{$search}%")
+                        ->orWhere('nik_hash', Participant::nikHash($search))
                         ->orWhere('registration_code', 'like', "%{$search}%");
 
                     // Nominal transfer ("Rp 75.123") atau kode unik ("123") dicocokkan lewat tiga digit terakhir.

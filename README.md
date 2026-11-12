@@ -9,7 +9,9 @@ Aplikasi pendaftaran peserta Musabaqah Tilawatil Qur’an Tingkat Kota Malang 20
 - Tanpa akun peserta: status dan unggah bukti pembayaran dibuka dengan kode pendaftaran + nomor WhatsApp terdaftar (format 08…, 62…, atau +62… dianggap sama). Akses berlaku per sesi browser.
 - Biaya pendaftaran per kategori (Tilawah: Anak Rp35.000, Remaja Rp50.000, Dewasa Rp70.000; MHQ Juz 30 dan Murottal tingkat SD: Rp35.000) + kode unik 3 digit (001–999, tidak ada yang sama antarpeserta) sebagai penanda asal transfer. Cabang, kategori, biaya, jadwal pendaftaran, dan rekening diatur di `config/mtq.php`.
 - Pendaftaran hanya dibuka 7 November – 24 Desember 2026 (WIB). Khot Indah tampil sebagai "segera diumumkan" sampai `open` diubah menjadi `true` di config.
-- Peserta mengunggah bukti transfer (JPG/PNG/WEBP/PDF, maks. 5 MB) melalui halaman status; file disimpan privat di `storage/app/private/payment-proofs`.
+- Data peserta: nama, NIK, tanggal lahir, jenis kelamin, alamat domisili (kecamatan Kota Malang), WhatsApp, asal & alamat sekolah/lembaga, satu cabang lomba. Satu NIK hanya dapat mengikuti satu cabang.
+- Dokumen persyaratan: identitas diri (KTP/Kartu Pelajar/KIA/Akta, JPG/PNG/WEBP/PDF maks. 5 MB) dan pasfoto 3x4 (maks. 2 MB) saat mendaftar; bukti transfer diunggah setelah mendaftar.
+- Keamanan data: NIK dan semua dokumen dienkripsi dengan `APP_KEY`; jenis file dicek dari isinya; gambar ditulis ulang (metadata/GPS terhapus, sisipan kode ternetralisasi); dokumen hanya bisa dibuka panitia yang login; satu bukti transfer tidak bisa dipakai untuk dua pendaftaran; nama panitia yang menandai lunas tercatat.
 - Panel panitia untuk mencari (termasuk berdasarkan nominal transfer, mis. `35.123`), memfilter status pembayaran, melihat bukti, menandai lunas atau menolak bukti dengan alasan, serta memverifikasi data peserta.
 - Akun panitia dibuat melalui perintah Artisan; pendaftaran akun publik tidak tersedia.
 
