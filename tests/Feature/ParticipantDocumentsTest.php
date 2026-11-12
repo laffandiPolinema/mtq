@@ -22,7 +22,7 @@ class ParticipantDocumentsTest extends TestCase
             ->assertSee('Bukti Pendaftaran')
             ->assertSee($participant->registration_code)
             ->assertSee($participant->full_name)
-            ->assertSee('Rp 75.047')
+            ->assertSee('Rp 35.047')
             ->assertSee('144-00-3024646-3');
     }
 
@@ -63,7 +63,7 @@ class ParticipantDocumentsTest extends TestCase
         $this->assertStringContainsString('Total Transfer', $csv);
         $this->assertStringContainsString($paid->registration_code, $csv);
         $this->assertStringContainsString('"Ahmad Lunas";', $csv);
-        $this->assertStringContainsString(';75123;Lunas;', $csv);
+        $this->assertStringContainsString(';35123;Lunas;', $csv);
         $this->assertStringContainsString('"=""081234567890"""', $csv);
         $this->assertStringNotContainsString($unpaid->registration_code, $csv);
     }

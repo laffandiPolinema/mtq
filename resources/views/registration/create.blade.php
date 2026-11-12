@@ -2,10 +2,18 @@
 
 @section('title', 'Pendaftaran Peserta · MTQ Kota Malang 2026')
 
+@use('App\Models\Participant')
+
 @section('content')
     <section class="hero">
         <div class="hero-copy">
-            <span class="eyebrow"><span class="eyebrow-dot"></span> Pendaftaran peserta dibuka</span>
+            <span class="eyebrow eyebrow-{{ $period['status'] }}"><span class="eyebrow-dot"></span>
+                @switch($period['status'])
+                    @case('upcoming') Pendaftaran dibuka {{ $period['opens_at']->translatedFormat('d F Y') }} @break
+                    @case('open') Pendaftaran dibuka s.d. {{ $period['closes_at']->translatedFormat('d F Y') }} @break
+                    @default Pendaftaran telah ditutup
+                @endswitch
+            </span>
             <h1 class="hero-title">Pendaftaran<br>Peserta</h1>
             <p class="hero-subtitle">Musabaqah Tilawatil Qur’an (MTQ)<br>Tingkat Kota Malang Tahun 2026</p>
             <p class="hero-organizer"><span>Diselenggarakan oleh:</span><strong>PHBI &amp; Ketakmiran Masjid Jami’ Blimbing Kota Malang</strong></p>
@@ -22,9 +30,19 @@
                     <span class="detail-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" fill="currentColor"/></svg></span>
                     <span><small>Tempat</small><strong>Malang Creative Center (MCC)</strong></span>
                 </div>
+                <div>
+                    <span class="detail-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8 1.5V8h4.5zM8 12h8v2H8zm0 4h8v2H8z" fill="currentColor"/></svg></span>
+                    <span><small>Pendaftaran</small><strong>{{ $period['opens_at']->translatedFormat('j M') }} – {{ $period['closes_at']->translatedFormat('j M Y') }}</strong></span>
+                </div>
+                <div>
+                    <span class="detail-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-8 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 2c-2.7 0-8 1.3-8 4v2h10v-2c0-1 .4-1.9 1.1-2.6C10 13.2 8.8 13 8 13zm8 0c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z" fill="currentColor"/></svg></span>
+                    <span><small>Technical meeting (H-5)</small><strong>{{ \Illuminate\Support\Carbon::parse(config('mtq.technical_meeting_date'))->translatedFormat('l, j F Y') }}</strong></span>
+                </div>
             </div>
             <div class="hero-actions">
-                <a class="button button-primary" href="#daftar">Daftar sekarang <span aria-hidden="true">→</span></a>
+                @if ($period['status'] === 'open')
+                    <a class="button button-primary" href="#daftar">Daftar sekarang <span aria-hidden="true">→</span></a>
+                @endif
                 <a class="button button-outline" href="{{ route('status.form') }}">Cek status &amp; pembayaran</a>
             </div>
         </div>
@@ -71,15 +89,24 @@
             'tilawah' => 'M12 6c-2-1.6-5-2-8-1.5V19c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V4.5C17 4 14 4.4 12 6zm0 0v14',
             'khot_indah' => 'M4 20l4-1 11-11-3-3L5 16zm10-14 3 3M4 20h16',
             'mhq' => 'M12 4a5 5 0 0 0-5 5c0 1.6.8 3 2 4v3h6v-3c1.2-1 2-2.4 2-4a5 5 0 0 0-5-5zm-2 15h4',
-            'murottal' => 'M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4',
+            'pildacil' => 'M4 5h16v10H9l-5 4zM8 9h8M8 12h5',
+            'murottal' => 'M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM6 11a6 6 0 0 0 12 0M12 17v4M9 21h6',
         ])
         <div class="branch-grid">
-            @foreach ($branches as $key => $label)
-                <article class="branch-card">
-                    <span class="icon-circle" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="{{ $branchIcons[$key] }}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            @foreach ($branchConfig as $key => $branch)
+                <article class="branch-card @unless ($branch['open']) branch-card-soon @endunless">
+                    <span class="icon-circle" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="{{ $branchIcons[$key] ?? $branchIcons['tilawah'] }}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                     <span class="branch-number">0{{ $loop->iteration }}</span>
-                    <h3>{{ $label }}</h3>
-                    <p>{{ $key === 'tilawah' ? 'Kategori anak-anak, remaja, dewasa, dan lansia.' : 'Terbuka bagi peserta yang memenuhi ketentuan LPTQ.' }}</p>
+                    <h3>{{ $branch['label'] }}</h3>
+                    @if ($branch['open'])
+                        <ul class="branch-fees">
+                            @foreach ($branch['categories'] as $category)
+                                <li><span><strong>{{ $category['label'] }}</strong><small>{{ $category['description'] }}</small></span><b>Rp {{ number_format($category['fee'], 0, ',', '.') }}</b></li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p class="soon-badge">Ketentuan &amp; biaya segera diumumkan</p>
+                    @endif
                 </article>
             @endforeach
         </div>
@@ -88,11 +115,12 @@
     <section class="content-section fee-section" id="biaya">
         <div class="fee-card">
             <span class="section-kicker">Biaya pendaftaran</span>
-            <strong class="fee-amount">Rp {{ number_format($registrationFee, 0, ',', '.') }}</strong>
-            <p>per peserta, <strong>ditambah 3 digit kode unik</strong> yang diberikan otomatis setelah formulir terkirim.</p>
+            @php($fees = collect($branchConfig)->flatMap(fn ($branch) => array_column($branch['categories'], 'fee')))
+            <strong class="fee-amount"><small>mulai</small> Rp {{ number_format($fees->min(), 0, ',', '.') }}</strong>
+            <p>per peserta <strong>sesuai cabang &amp; kategori</strong> (lihat kartu cabang di atas), <strong>ditambah 3 digit kode unik</strong> yang diberikan otomatis setelah formulir terkirim.</p>
             <div class="fee-example">
-                <span>Contoh nominal transfer</span>
-                <strong>Rp {{ substr(number_format($registrationFee + 123, 0, ',', '.'), 0, -3) }}<em>123</em></strong>
+                <span>Contoh: Tilawah kategori Remaja</span>
+                <strong>Rp {{ substr(number_format(Participant::feeFor('tilawah', 'remaja') + 123, 0, ',', '.'), 0, -3) }}<em>123</em></strong>
                 <small>Tiga digit terakhir menjadi penanda pembayaran atas nama Anda.</small>
             </div>
         </div>
@@ -115,6 +143,20 @@
             <div class="privacy-note"><span>✓</span><p>Data digunakan panitia untuk keperluan registrasi dan verifikasi peserta.</p></div>
         </div>
 
+        @if ($period['status'] !== 'open')
+            <div class="registration-form registration-closed">
+                <span class="result-icon">{{ $period['status'] === 'upcoming' ? '⏳' : '✓' }}</span>
+                <h3>{{ $period['status'] === 'upcoming' ? 'Pendaftaran belum dibuka' : 'Pendaftaran telah ditutup' }}</h3>
+                <p>
+                    @if ($period['status'] === 'upcoming')
+                        Formulir dapat diisi mulai <strong>{{ $period['opens_at']->translatedFormat('d F Y') }}</strong> hingga {{ $period['closes_at']->translatedFormat('d F Y') }}.
+                    @else
+                        Pendaftaran ditutup pada <strong>{{ $period['closes_at']->translatedFormat('d F Y') }}</strong>. Peserta yang sudah mendaftar tetap dapat mengecek status dan mengunggah bukti pembayaran.
+                    @endif
+                </p>
+                <a class="button button-outline" href="{{ route('status.form') }}">Cek status pendaftaran</a>
+            </div>
+        @else
         <form class="registration-form" action="{{ route('registration.store') }}" method="POST">
             @csrf
             <div class="form-heading"><span class="step-badge">01</span><div><h3>Data peserta</h3><p>Informasi dasar calon peserta</p></div></div>
@@ -183,20 +225,22 @@
                     <label for="branch">Cabang perlombaan <span>*</span></label>
                     <select id="branch" name="branch" required>
                         <option value="">Pilih cabang lomba</option>
-                        @foreach ($branches as $key => $label)
-                            <option value="{{ $key }}" @selected(old('branch') === $key)>{{ $label }}</option>
+                        @foreach ($branchConfig as $key => $branch)
+                            @if ($branch['open'])
+                                <option value="{{ $key }}" @selected(old('branch') === $key)>{{ $branch['label'] }}</option>
+                            @else
+                                <option value="{{ $key }}" disabled>{{ $branch['label'] }} (segera dibuka)</option>
+                            @endif
                         @endforeach
                     </select>
                     @error('branch') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
-                <div class="field field-wide" id="category-field" @if (old('branch') !== 'tilawah') hidden @endif>
-                    <label for="category">Kategori tilawah <span>*</span></label>
-                    <select id="category" name="category">
-                        <option value="">Pilih kategori</option>
-                        @foreach ($categories as $key => $label)
-                            <option value="{{ $key }}" @selected(old('category') === $key)>{{ $label }}</option>
-                        @endforeach
+                <div class="field field-wide">
+                    <label for="category">Kategori <span>*</span></label>
+                    <select id="category" name="category" required data-selected="{{ old('category') }}">
+                        <option value="">Pilih cabang lomba terlebih dahulu</option>
                     </select>
+                    <small class="field-hint">Tilawah: Anak (SD s.d. SMP kelas 8), Remaja (SMP kelas 9 s.d. SMA), Dewasa (mahasiswa s.d. usia lanjut). Cabang lain: tingkat SD.</small>
                     @error('category') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
             </div>
@@ -204,12 +248,13 @@
             <div class="form-divider"></div>
             <div class="fee-summary">
                 <span>Biaya pendaftaran</span>
-                <strong>Rp {{ number_format($registrationFee, 0, ',', '.') }} <small>+ kode unik 3 digit</small></strong>
+                <strong><span id="fee-amount">Pilih cabang &amp; kategori</span> <small>+ kode unik 3 digit</small></strong>
             </div>
 
             <button class="button button-primary submit-button" type="submit">Kirim pendaftaran <span aria-hidden="true">→</span></button>
             <p class="form-footnote">Dengan mengirim formulir ini, Anda menyetujui data di atas digunakan untuk proses pendaftaran MTQ.</p>
         </form>
+        @endif
     </section>
 
     <section class="bottom-cta">
@@ -217,18 +262,39 @@
         <a class="button button-light" href="{{ route('status.form') }}">Cek status <span aria-hidden="true">→</span></a>
     </section>
 
-    <script>
-        const branchSelect = document.getElementById('branch');
-        const categoryField = document.getElementById('category-field');
-        const categorySelect = document.getElementById('category');
+    @if ($period['status'] === 'open')
+        <script>
+            const branchConfig = {{ Js::from($branchConfig) }};
+            const branchSelect = document.getElementById('branch');
+            const categorySelect = document.getElementById('category');
+            const feeAmount = document.getElementById('fee-amount');
+            const rupiah = (value) => 'Rp ' + value.toLocaleString('id-ID');
 
-        function updateCategoryField() {
-            const isTilawah = branchSelect.value === 'tilawah';
-            categoryField.hidden = !isTilawah;
-            categorySelect.required = isTilawah;
-        }
+            function renderCategories() {
+                const categories = branchConfig[branchSelect.value]?.categories ?? {};
+                const keys = Object.keys(categories);
+                const selected = categorySelect.value || categorySelect.dataset.selected;
 
-        branchSelect.addEventListener('change', updateCategoryField);
-        updateCategoryField();
-    </script>
+                categorySelect.innerHTML = '';
+                categorySelect.add(new Option(keys.length ? 'Pilih kategori' : 'Pilih cabang lomba terlebih dahulu', ''));
+                keys.forEach((key) => {
+                    const category = categories[key];
+                    categorySelect.add(new Option(`${category.label} – ${category.description} (${rupiah(category.fee)})`, key));
+                });
+
+                categorySelect.value = keys.length === 1 ? keys[0] : (keys.includes(selected) ? selected : '');
+                categorySelect.dataset.selected = '';
+                renderFee();
+            }
+
+            function renderFee() {
+                const category = branchConfig[branchSelect.value]?.categories?.[categorySelect.value];
+                feeAmount.textContent = category ? rupiah(category.fee) : 'Pilih cabang & kategori';
+            }
+
+            branchSelect.addEventListener('change', renderCategories);
+            categorySelect.addEventListener('change', renderFee);
+            renderCategories();
+        </script>
+    @endif
 @endsection

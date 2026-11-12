@@ -107,6 +107,8 @@ main { position: relative; z-index: 1; }
 .hero-copy { position: relative; z-index: 1; }
 .eyebrow { display: inline-flex; gap: 9px; align-items: center; padding: 8px 14px; background: #fff; border-radius: 999px; box-shadow: var(--shadow); }
 .eyebrow-dot { width: 8px; height: 8px; background: #19a35a; border-radius: 50%; box-shadow: 0 0 0 4px #19a35a26; }
+.eyebrow-upcoming .eyebrow-dot { background: var(--gold); box-shadow: 0 0 0 4px #d4a63a33; }
+.eyebrow-closed .eyebrow-dot { background: #b4432f; box-shadow: 0 0 0 4px #b4432f26; }
 .hero-title { margin: 22px 0 14px; color: var(--green); font-size: clamp(46px, 6.4vw, 88px); font-weight: 800; line-height: .95; letter-spacing: -.03em; text-transform: uppercase; }
 .hero-subtitle { margin: 0; color: #333; font-size: clamp(16px, 1.7vw, 21px); font-weight: 800; line-height: 1.35; text-transform: uppercase; }
 .hero-organizer { margin: 22px 0 0; }
@@ -138,7 +140,7 @@ main { position: relative; z-index: 1; }
 .section-heading h2 { margin-top: 8px; font-size: clamp(30px, 3.6vw, 46px); }
 .section-heading > p { max-width: 430px; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
 
-.branch-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.branch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 18px; }
 .branch-card { position: relative; min-height: 230px; padding: 26px 22px; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); transition: transform .2s; }
 .branch-card:hover { transform: translateY(-4px); }
 .icon-circle { width: 64px; height: 64px; display: grid; place-items: center; border-radius: 50%; color: var(--green-dark); background: #f3f3f0; box-shadow: 0 8px 18px -8px rgb(0 0 0 / .3), inset 0 0 0 1px #fff; }
@@ -146,6 +148,14 @@ main { position: relative; z-index: 1; }
 .branch-number { position: absolute; top: 22px; right: 22px; color: var(--gold); font-size: 13px; font-weight: 800; }
 .branch-card h3 { margin: 22px 0 8px; color: var(--green-dark); font-size: 18px; font-weight: 800; }
 .branch-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.branch-fees { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.branch-fees li { padding: 9px 11px; display: flex; justify-content: space-between; align-items: center; gap: 10px; background: #f7f6f1; border-radius: 12px; }
+.branch-fees strong, .branch-fees small { display: block; }
+.branch-fees strong { color: var(--green-dark); font-size: 13px; }
+.branch-fees small { margin-top: 1px; color: var(--muted); font-size: 11px; line-height: 1.4; }
+.branch-fees b { flex: none; color: var(--gold-dark); font-size: 13px; font-weight: 800; }
+.branch-card-soon { background: rgb(255 255 255 / .6); box-shadow: none; border: 1.5px dashed #e2d4a8; }
+.soon-badge { display: inline-block; padding: 6px 12px; color: var(--gold-dark) !important; background: #fbf3dc; border-radius: 999px; font-size: 12px !important; font-weight: 700; }
 
 /* ---------- Biaya & alur ---------- */
 .fee-section { display: grid; grid-template-columns: minmax(280px, .8fr) 1.2fr; gap: 50px; align-items: start; padding-top: 20px; }
@@ -153,6 +163,7 @@ main { position: relative; z-index: 1; }
 .fee-card::after { position: absolute; left: 0; right: 0; bottom: 0; height: 8px; content: ''; background: var(--gold-gradient); }
 .fee-card .section-kicker { color: var(--gold-light); }
 .fee-amount { display: block; margin: 10px 0 6px; color: #fff; font-size: clamp(38px, 4vw, 52px); font-weight: 800; letter-spacing: -.02em; }
+.fee-amount small { margin-right: 4px; color: var(--gold-light); font-size: 15px; font-weight: 600; }
 .fee-card > p { margin: 0; color: #cfe0d6; font-size: 14px; line-height: 1.7; }
 .fee-card > p strong { color: var(--gold-light); }
 .fee-example { margin-top: 24px; padding: 18px; background: rgb(255 255 255 / .08); border: 1px dashed rgb(246 220 133 / .5); border-radius: 16px; }
@@ -187,12 +198,17 @@ main { position: relative; z-index: 1; }
 .field input, .field select, .field textarea { width: 100%; min-height: 48px; padding: 11px 15px; color: var(--ink); background: #fbfbf8; border: 1.5px solid var(--line); border-radius: 14px; font-size: 14px; outline: none; transition: border-color .15s, box-shadow .15s; }
 .field textarea { resize: vertical; }
 .field input:focus, .field select:focus, .field textarea:focus { background: #fff; border-color: var(--green); box-shadow: 0 0 0 4px #0b6b3a1f; }
+.field-hint { display: block; margin-top: 6px; color: var(--muted); font-size: 11px; line-height: 1.5; }
 .field-error { display: block; margin-top: 6px; color: #b4432f; font-size: 12px; font-weight: 600; }
 .form-divider { height: 1px; margin: 32px 0; background: linear-gradient(90deg, transparent, #e2d4a8, transparent); }
 .fee-summary { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px 20px; background: var(--green-soft); border-radius: 16px; }
 .fee-summary span { color: var(--green-dark); font-size: 13px; font-weight: 700; }
 .fee-summary strong { color: var(--green); font-size: 20px; font-weight: 800; }
 .fee-summary small { color: var(--muted); font-size: 12px; font-weight: 600; }
+.registration-closed { text-align: center; }
+.registration-closed .result-icon { margin: 0 auto 18px; }
+.registration-closed h3 { margin: 0 0 10px; color: var(--green-dark); font-size: 22px; font-weight: 800; }
+.registration-closed p { margin: 0 0 22px; color: var(--muted); font-size: 14px; line-height: 1.7; }
 .submit-button { width: 100%; margin-top: 22px; min-height: 54px; font-size: 15px; }
 .form-footnote { margin: 14px 0 0; color: var(--muted); font-size: 11px; text-align: center; }
 

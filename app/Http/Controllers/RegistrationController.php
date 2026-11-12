@@ -8,6 +8,7 @@ use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -18,15 +19,25 @@ class RegistrationController extends Controller
     public function create(): View
     {
         return view('registration.create', [
-            'branches' => Participant::BRANCHES,
-            'categories' => Participant::TILAWAH_CATEGORIES,
+            'branchConfig' => config('mtq.branches'),
+            'openBranches' => Participant::openBranches(),
             'districts' => Participant::DISTRICTS,
-            'registrationFee' => config('mtq.registration_fee'),
+            'period' => $this->registrationPeriod(),
         ]);
     }
 
     public function store(Request $request): RedirectResponse
     {
+        $period = $this->registrationPeriod();
+
+        if ($period['status'] !== 'open') {
+            throw ValidationException::withMessages([
+                'full_name' => $period['status'] === 'upcoming'
+                    ? 'Pendaftaran baru dibuka pada '.$period['opens_at']->translatedFormat('d F Y').'.'
+                    : 'Pendaftaran sudah ditutup pada '.$period['closes_at']->translatedFormat('d F Y').'.',
+            ]);
+        }
+
         $validated = $request->validate([
             'full_name' => ['required', 'string', 'max:255'],
             'gender' => ['required', Rule::in(['male', 'female'])],
@@ -37,11 +48,10 @@ class RegistrationController extends Controller
             'institution' => ['nullable', 'string', 'max:255'],
             'phone' => ['required', 'string', 'max:25'],
             'email' => ['nullable', 'email', 'max:255'],
-            'branch' => ['required', Rule::in(array_keys(Participant::BRANCHES))],
+            'branch' => ['required', Rule::in(array_keys(Participant::openBranches()))],
             'category' => [
-                Rule::requiredIf($request->input('branch') === 'tilawah'),
-                'nullable',
-                Rule::in(array_keys(Participant::TILAWAH_CATEGORIES)),
+                'required',
+                Rule::in(array_keys(Participant::categoriesFor((string) $request->input('branch')))),
             ],
         ], [
             'required' => 'Kolom :attribute wajib diisi.',
@@ -60,12 +70,8 @@ class RegistrationController extends Controller
             'institution' => 'lembaga',
             'phone' => 'nomor WhatsApp',
             'branch' => 'cabang lomba',
-            'category' => 'kategori tilawah',
+            'category' => 'kategori',
         ]);
-
-        if ($validated['branch'] !== 'tilawah') {
-            $validated['category'] = null;
-        }
 
         $participant = null;
 
@@ -82,7 +88,7 @@ class RegistrationController extends Controller
                 $participant = Participant::create([
                     ...$validated,
                     'registration_code' => $this->newRegistrationCode(),
-                    'registration_fee' => config('mtq.registration_fee'),
+                    'registration_fee' => Participant::feeFor($validated['branch'], $validated['category']),
                     'payment_unique_code' => $uniqueCode,
                 ]);
             } catch (UniqueConstraintViolationException $exception) {
@@ -95,6 +101,25 @@ class RegistrationController extends Controller
         EnsureParticipantAccess::grant($request, $participant->registration_code);
 
         return redirect()->route('registration.success', $participant->registration_code);
+    }
+
+    /**
+     * @return array{status: 'upcoming'|'open'|'closed', opens_at: Carbon, closes_at: Carbon}
+     */
+    private function registrationPeriod(): array
+    {
+        $opensAt = Carbon::parse(config('mtq.registration_opens_at'));
+        $closesAt = Carbon::parse(config('mtq.registration_closes_at'));
+
+        return [
+            'status' => match (true) {
+                now()->lt($opensAt) => 'upcoming',
+                now()->gt($closesAt) => 'closed',
+                default => 'open',
+            },
+            'opens_at' => $opensAt,
+            'closes_at' => $closesAt,
+        ];
     }
 
     private function newRegistrationCode(): string

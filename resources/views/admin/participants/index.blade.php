@@ -23,7 +23,7 @@
         @if (session('success')) <div class="notice notice-success">{{ session('success') }}</div> @endif
 
         <form class="admin-filters" action="{{ route('admin.participants.index') }}" method="GET">
-            <div class="field search-field"><label for="search">Cari peserta</label><input id="search" name="search" value="{{ request('search') }}" placeholder="Nama, kode pendaftaran, atau nominal transfer (mis. 75.123)"></div>
+            <div class="field search-field"><label for="search">Cari peserta</label><input id="search" name="search" value="{{ request('search') }}" placeholder="Nama, kode pendaftaran, atau nominal transfer (mis. 35.123)"></div>
             <div class="field"><label for="branch-filter">Cabang</label><select id="branch-filter" name="branch"><option value="">Semua cabang</option>@foreach ($branches as $key => $label)<option value="{{ $key }}" @selected(request('branch') === $key)>{{ $label }}</option>@endforeach</select></div>
             <div class="field"><label for="payment-filter">Pembayaran</label><select id="payment-filter" name="payment_status"><option value="">Semua</option>@foreach ($paymentStatuses as $key => $label)<option value="{{ $key }}" @selected(request('payment_status') === $key)>{{ $label }}</option>@endforeach</select></div>
             <div class="field"><label for="status-filter">Status data</label><select id="status-filter" name="status"><option value="">Semua status</option>@foreach ($statuses as $key => $label)<option value="{{ $key }}" @selected(request('status') === $key)>{{ $label }}</option>@endforeach</select></div>

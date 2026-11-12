@@ -134,6 +134,7 @@
             <ol>
                 <li>Transfer <strong>tepat {{ $amount }}</strong> (termasuk 3 digit kode unik) agar pembayaran dapat dikenali.</li>
                 <li>Unggah bukti transfer dan pantau status melalui menu <strong>Cek pendaftaran</strong> dengan nomor registrasi dan nomor WhatsApp terdaftar.</li>
+                <li>Ikuti <strong>technical meeting</strong> (H-5) pada <strong>{{ \Illuminate\Support\Carbon::parse(config('mtq.technical_meeting_date'))->translatedFormat('l, j F Y') }}</strong>; tempat dan waktu diumumkan panitia.</li>
                 <li>Simpan dokumen ini dan tunjukkan saat registrasi ulang pada hari pelaksanaan.</li>
             </ol>
         </div>

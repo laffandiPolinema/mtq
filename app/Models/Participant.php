@@ -42,20 +42,6 @@ class Participant extends Model
         'Sukun',
     ];
 
-    public const BRANCHES = [
-        'tilawah' => 'Tilawah Al-Qur’an',
-        'khot_indah' => 'Khot Indah Al-Qur’an',
-        'mhq' => 'MHQ',
-        'murottal' => 'Murottal',
-    ];
-
-    public const TILAWAH_CATEGORIES = [
-        'anak-anak' => 'Anak-anak',
-        'remaja' => 'Remaja',
-        'dewasa' => 'Dewasa',
-        'lansia' => 'Lansia',
-    ];
-
     public const STATUSES = [
         'pending' => 'Menunggu verifikasi',
         'approved' => 'Terverifikasi',
@@ -80,14 +66,59 @@ class Participant extends Model
         ];
     }
 
+    /**
+     * Semua cabang lomba (termasuk yang belum dibuka), sesuai config/mtq.php.
+     *
+     * @return array<string, string>
+     */
+    public static function branches(): array
+    {
+        return array_map(fn (array $branch): string => $branch['label'], config('mtq.branches'));
+    }
+
+    /**
+     * Cabang yang sudah dapat dipilih di formulir pendaftaran.
+     *
+     * @return array<string, string>
+     */
+    public static function openBranches(): array
+    {
+        return array_intersect_key(
+            self::branches(),
+            array_filter(config('mtq.branches'), fn (array $branch): bool => $branch['open']),
+        );
+    }
+
+    /**
+     * @return array<string, array{label: string, description: string, fee: int}>
+     */
+    public static function categoriesFor(string $branch): array
+    {
+        return config("mtq.branches.{$branch}.categories", []);
+    }
+
+    public static function feeFor(string $branch, string $category): ?int
+    {
+        return self::categoriesFor($branch)[$category]['fee'] ?? null;
+    }
+
     public function branchLabel(): string
     {
-        return self::BRANCHES[$this->branch];
+        return self::branches()[$this->branch] ?? $this->branch;
     }
 
     public function categoryLabel(): ?string
     {
-        return $this->category === null ? null : self::TILAWAH_CATEGORIES[$this->category];
+        if ($this->category === null) {
+            return null;
+        }
+
+        $category = self::categoriesFor($this->branch)[$this->category] ?? null;
+
+        // Kategori lama yang sudah tidak ada di konfigurasi (mis. "lansia") tetap ditampilkan apa adanya.
+        return $category === null
+            ? ucfirst($this->category)
+            : "{$category['label']} ({$category['description']})";
     }
 
     public function paymentStatusLabel(): string

@@ -2,15 +2,27 @@
 
 namespace Tests\Feature;
 
+use App\Http\Middleware\EnsureParticipantAccess;
 use App\Models\Participant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ParticipantRegistrationTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Tanggal di dalam masa pendaftaran (7 November – 24 Desember 2026).
+        $this->travelTo(Carbon::parse('2026-11-20 10:00:00'));
+    }
 
     public function test_the_registration_page_lists_the_event_branches(): void
     {
@@ -44,7 +56,7 @@ class ParticipantRegistrationTest extends TestCase
             ->assertSee('Menunggu verifikasi');
     }
 
-    public function test_tilawah_category_is_required_and_other_branches_do_not_store_one(): void
+    public function test_category_is_required_and_must_belong_to_the_chosen_branch(): void
     {
         $this->post(route('registration.store'), [
             ...$this->validRegistration(),
@@ -55,12 +67,87 @@ class ParticipantRegistrationTest extends TestCase
             ...$this->validRegistration(),
             'branch' => 'mhq',
             'category' => 'remaja',
-        ])->assertRedirect();
+        ])->assertSessionHasErrors('category');
 
-        $this->assertDatabaseHas('participants', [
-            'branch' => 'mhq',
-            'category' => null,
-        ]);
+        $this->post(route('registration.store'), [
+            ...$this->validRegistration(),
+            'category' => 'lansia',
+        ])->assertSessionHasErrors('category');
+
+        $this->assertDatabaseCount('participants', 0);
+    }
+
+    public function test_the_fee_follows_the_chosen_branch_and_category(): void
+    {
+        $cases = [
+            ['tilawah', 'anak-anak', 35000],
+            ['tilawah', 'remaja', 50000],
+            ['tilawah', 'dewasa', 70000],
+            ['mhq', 'anak-anak', 35000],
+            ['pildacil', 'anak-anak', 35000],
+            ['murottal', 'anak-anak', 35000],
+        ];
+
+        foreach ($cases as [$branch, $category, $fee]) {
+            $this->post(route('registration.store'), [
+                ...$this->validRegistration(),
+                'full_name' => "Peserta {$branch} {$category}",
+                'branch' => $branch,
+                'category' => $category,
+            ])->assertRedirect();
+
+            $this->assertDatabaseHas('participants', [
+                'full_name' => "Peserta {$branch} {$category}",
+                'registration_fee' => $fee,
+            ]);
+        }
+    }
+
+    public function test_khot_indah_cannot_be_chosen_until_its_rules_are_announced(): void
+    {
+        $this->get('/')
+            ->assertSee('Khot Indah Al-Qur’an (segera dibuka)')
+            ->assertSee('Ketentuan &amp; biaya segera diumumkan', false);
+
+        $this->post(route('registration.store'), [
+            ...$this->validRegistration(),
+            'branch' => 'khot_indah',
+            'category' => 'anak-anak',
+        ])->assertSessionHasErrors('branch');
+
+        $this->assertDatabaseCount('participants', 0);
+    }
+
+    public function test_registration_is_only_accepted_between_7_november_and_24_december(): void
+    {
+        $this->travelTo(Carbon::parse('2026-11-06 23:59:00'));
+        $this->get('/')->assertSee('Pendaftaran belum dibuka')->assertDontSee('Kirim pendaftaran');
+        $this->post(route('registration.store'), $this->validRegistration())->assertSessionHasErrors('full_name');
+
+        $this->travelTo(Carbon::parse('2026-12-25 00:00:01'));
+        $this->get('/')->assertSee('Pendaftaran telah ditutup')->assertDontSee('Kirim pendaftaran');
+        $this->post(route('registration.store'), $this->validRegistration())->assertSessionHasErrors('full_name');
+
+        $this->assertDatabaseCount('participants', 0);
+
+        $this->travelTo(Carbon::parse('2026-12-24 23:59:00'));
+        $this->post(route('registration.store'), $this->validRegistration())->assertRedirect();
+
+        $this->assertDatabaseCount('participants', 1);
+    }
+
+    public function test_participants_who_registered_can_still_upload_proof_after_registration_closes(): void
+    {
+        Storage::fake('local');
+        $participant = Participant::factory()->create();
+        $this->travelTo(Carbon::parse('2026-12-25 09:00:00'));
+
+        $this->withSession([EnsureParticipantAccess::SESSION_KEY => [$participant->registration_code]])
+            ->post(route('registration.payment.store', $participant->registration_code), [
+                'payment_proof' => UploadedFile::fake()->image('bukti.jpg'),
+            ])->assertRedirect(route('status.show', $participant->registration_code));
+
+        $this->assertSame('waiting', $participant->refresh()->payment_status);
     }
 
     public function test_only_an_authenticated_admin_can_manage_participants(): void

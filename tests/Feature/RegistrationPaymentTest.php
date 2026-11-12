@@ -7,6 +7,7 @@ use App\Models\Participant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -15,16 +16,24 @@ class RegistrationPaymentTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Tanggal di dalam masa pendaftaran (7 November – 24 Desember 2026).
+        $this->travelTo(Carbon::parse('2026-11-20 10:00:00'));
+    }
+
     public function test_registration_assigns_the_fee_plus_a_unique_code_and_shows_payment_instructions(): void
     {
         $this->post(route('registration.store'), $this->validRegistration())->assertRedirect();
 
         $participant = Participant::firstOrFail();
 
-        $this->assertSame(75000, $participant->registration_fee);
+        $this->assertSame(50000, $participant->registration_fee);
         $this->assertGreaterThanOrEqual(1, $participant->payment_unique_code);
         $this->assertLessThanOrEqual(999, $participant->payment_unique_code);
-        $this->assertSame(75000 + $participant->payment_unique_code, $participant->paymentAmount());
+        $this->assertSame(50000 + $participant->payment_unique_code, $participant->paymentAmount());
         $this->assertSame('unpaid', $participant->payment_status);
 
         $this->get(route('registration.success', $participant->registration_code))

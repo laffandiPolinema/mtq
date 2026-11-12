@@ -24,7 +24,7 @@ class AdminParticipantController extends Controller
 
         return view('admin.participants.index', [
             'participants' => $participants,
-            'branches' => Participant::BRANCHES,
+            'branches' => Participant::branches(),
             'statuses' => Participant::STATUSES,
             'paymentStatuses' => Participant::PAYMENT_STATUSES,
             'counts' => [
@@ -178,7 +178,7 @@ class AdminParticipantController extends Controller
             'search' => ['nullable', 'string', 'max:100'],
             'status' => ['nullable', Rule::in(array_keys(Participant::STATUSES))],
             'payment_status' => ['nullable', Rule::in(array_keys(Participant::PAYMENT_STATUSES))],
-            'branch' => ['nullable', Rule::in(array_keys(Participant::BRANCHES))],
+            'branch' => ['nullable', Rule::in(array_keys(Participant::branches()))],
         ]);
 
         return Participant::query()

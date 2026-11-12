@@ -30,9 +30,9 @@ class ParticipantFactory extends Factory
             'phone' => '08'.fake()->numerify('##########'),
             'email' => null,
             'branch' => 'mhq',
-            'category' => null,
+            'category' => 'anak-anak',
             'status' => 'pending',
-            'registration_fee' => 75000,
+            'registration_fee' => 35000,
             'payment_unique_code' => fake()->unique()->numberBetween(1, 999),
             'payment_status' => 'unpaid',
         ];
