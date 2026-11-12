@@ -44,7 +44,7 @@
             <label class="upload-drop" for="payment_proof">
                 <span class="upload-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l5 5h-3v6h-4V8H7l5-5zM5 17h14v3H5z" fill="currentColor"/></svg></span>
                 <span><strong>Unggah bukti transfer</strong><small data-file-label>JPG, PNG, WEBP, atau PDF · maks. 5 MB</small></span>
-                <input id="payment_proof" name="payment_proof" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" required>
+                <input id="payment_proof" name="payment_proof" type="file" data-max-mb="5" data-label="Bukti transfer" accept="image/jpeg,image/png,image/webp,application/pdf" required>
             </label>
             @error('payment_proof') <small class="field-error">{{ $message }}</small> @enderror
             <button class="button button-primary" type="submit">Kirim bukti pembayaran <span aria-hidden="true">→</span></button>

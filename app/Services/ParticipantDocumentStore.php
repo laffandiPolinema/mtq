@@ -25,8 +25,18 @@ class ParticipantDocumentStore
 {
     private const DISK = 'local';
 
-    /** Batas piksel untuk mencegah "decompression bomb" saat gambar diproses. */
-    private const MAX_PIXELS = 40_000_000;
+    /**
+     * Gambar hingga batas ini ditulis ulang. Gambar yang lebih besar (mis. kamera HP 48 MP)
+     * disimpan apa adanya agar tidak ditolak hanya karena resolusinya dan tidak menghabiskan memori.
+     */
+    private const MAX_REENCODE_PIXELS = 24_000_000;
+
+    private const MIME_TYPES = [
+        'jpg' => 'image/jpeg',
+        'png' => 'image/png',
+        'webp' => 'image/webp',
+        'pdf' => 'application/pdf',
+    ];
 
     /**
      * Aturan validasi file. Jenis file dicek dari isinya (bukan hanya nama/ekstensi).
@@ -69,13 +79,15 @@ class ParticipantDocumentStore
     /**
      * @return array{path: string, hash: string}
      */
-    public function store(UploadedFile $file, string $directory, string $field, bool $passPhoto = false): array
+    public function store(UploadedFile $file, string $directory, string $field): array
     {
         $original = (string) file_get_contents($file->getRealPath());
-        $isPdf = $file->getMimeType() === 'application/pdf';
 
-        $contents = $isPdf ? $this->ensurePdf($original, $field) : $this->reencodeImage($file, $original, $field, $passPhoto);
-        $path = $directory.'/'.Str::random(40).($isPdf ? '.pdf' : '.jpg').'.enc';
+        [$contents, $extension] = $file->getMimeType() === 'application/pdf'
+            ? [$this->ensurePdf($original, $field), 'pdf']
+            : $this->prepareImage($file, $original, $field);
+
+        $path = $directory.'/'.Str::random(40).'.'.$extension.'.enc';
 
         Storage::disk(self::DISK)->put($path, Crypt::encryptString($contents));
 
@@ -102,11 +114,14 @@ class ParticipantDocumentStore
             $contents = $stored;
         }
 
-        $isPdf = str_contains($path, '.pdf');
+        $extension = strtolower(pathinfo(Str::beforeLast($path, '.enc'), PATHINFO_EXTENSION));
+        $extension = $extension === 'jpeg' ? 'jpg' : $extension;
+        $mime = self::MIME_TYPES[$extension] ?? 'application/octet-stream';
+        $disposition = str_starts_with($mime, 'image/') ? 'inline' : 'attachment';
 
         return response($contents, 200, [
-            'Content-Type' => $isPdf ? 'application/pdf' : 'image/jpeg',
-            'Content-Disposition' => ($isPdf ? 'attachment' : 'inline').'; filename="'.$downloadName.($isPdf ? '.pdf' : '.jpg').'"',
+            'Content-Type' => $mime,
+            'Content-Disposition' => $disposition.'; filename="'.$downloadName.'.'.$extension.'"',
             'X-Content-Type-Options' => 'nosniff',
             'Content-Security-Policy' => "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; sandbox",
             'Cache-Control' => 'private, no-store, max-age=0',
@@ -123,12 +138,25 @@ class ParticipantDocumentStore
         return $contents;
     }
 
-    private function reencodeImage(UploadedFile $file, string $contents, string $field, bool $passPhoto): string
+    /**
+     * @return array{0: string, 1: string} isi file dan ekstensinya
+     */
+    private function prepareImage(UploadedFile $file, string $contents, string $field): array
     {
         $size = @getimagesizefromstring($contents);
+        $extension = match ($size[2] ?? null) {
+            IMAGETYPE_JPEG => 'jpg',
+            IMAGETYPE_PNG => 'png',
+            IMAGETYPE_WEBP => 'webp',
+            default => null,
+        };
 
-        if ($size === false || $size[0] * $size[1] > self::MAX_PIXELS) {
-            throw ValidationException::withMessages([$field => 'Gambar tidak valid atau resolusinya terlalu besar.']);
+        if ($extension === null) {
+            throw ValidationException::withMessages([$field => 'File gambar tidak valid atau rusak. Gunakan JPG, PNG, atau WEBP.']);
+        }
+
+        if ($size[0] * $size[1] > self::MAX_REENCODE_PIXELS) {
+            return [$contents, $extension];
         }
 
         $image = @imagecreatefromstring($contents);
@@ -139,37 +167,18 @@ class ParticipantDocumentStore
 
         $image = $this->applyExifOrientation($image, $file);
 
-        if ($passPhoto) {
-            $this->ensurePassPhoto($image, $field);
+        if ($extension !== 'jpg') {
+            // Latar putih untuk PNG/WEBP transparan agar hasil JPEG tidak hitam.
+            $canvas = imagecreatetruecolor(imagesx($image), imagesy($image));
+            imagefill($canvas, 0, 0, imagecolorallocate($canvas, 255, 255, 255));
+            imagecopy($canvas, $image, 0, 0, 0, 0, imagesx($image), imagesy($image));
+            $image = $canvas;
         }
-
-        // Latar putih untuk PNG/WEBP transparan agar hasil JPEG tidak hitam.
-        $canvas = imagecreatetruecolor(imagesx($image), imagesy($image));
-        imagefill($canvas, 0, 0, imagecolorallocate($canvas, 255, 255, 255));
-        imagecopy($canvas, $image, 0, 0, 0, 0, imagesx($image), imagesy($image));
 
         ob_start();
-        imagejpeg($canvas, null, 88);
+        imagejpeg($image, null, 88);
 
-        return (string) ob_get_clean();
-    }
-
-    /**
-     * Pasfoto 3x4: posisi potret dengan rasio lebar:tinggi sekitar 3:4 (toleransi 0,6–0,9).
-     */
-    private function ensurePassPhoto(\GdImage $image, string $field): void
-    {
-        $width = imagesx($image);
-        $height = imagesy($image);
-        $ratio = $width / max($height, 1);
-
-        if ($width < 200 || $height < 260) {
-            throw ValidationException::withMessages([$field => 'Resolusi pasfoto terlalu kecil (minimal 200 × 260 piksel).']);
-        }
-
-        if ($ratio < 0.6 || $ratio > 0.9) {
-            throw ValidationException::withMessages([$field => 'Pasfoto harus berukuran 3x4 (posisi tegak/potret). Potong foto terlebih dahulu.']);
-        }
+        return [(string) ob_get_clean(), 'jpg'];
     }
 
     /**

@@ -57,6 +57,16 @@ button, select { cursor: pointer; }
 main { position: relative; z-index: 1; }
 
 .svg-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.alert-dialog { width: min(440px, calc(100% - 32px)); max-height: calc(100dvh - 40px); margin: auto; overflow: hidden; padding: 30px 28px 26px; border: 0; border-radius: var(--radius); text-align: center; box-shadow: 0 30px 80px -20px rgb(6 51 29 / .5); }
+.alert-dialog::backdrop { background: rgb(6 30 20 / .55); backdrop-filter: blur(3px); }
+.alert-dialog[open] { display: flex; flex-direction: column; animation: alert-pop .18s ease-out; }
+.alert-dialog-icon, .alert-dialog h2, .alert-dialog form { flex: none; }
+@keyframes alert-pop { from { opacity: 0; transform: translateY(8px) scale(.97); } }
+.alert-dialog-icon { width: 54px; height: 54px; margin: 0 auto 14px; display: grid; place-items: center; color: #fff; background: #b4432f; border-radius: 50%; box-shadow: 0 0 0 7px #fbe9e4; font-size: 26px; font-weight: 800; }
+.alert-dialog h2 { margin: 0 0 12px; color: var(--ink); font-size: 18px; font-weight: 800; }
+.alert-dialog ul { min-height: 0; margin: 0 0 22px; padding: 0 2px 0 0; list-style: none; display: grid; align-content: start; gap: 8px; overflow-y: auto; text-align: left; }
+.alert-dialog li { padding: 10px 14px; color: #8a3423; background: #fdf3f1; border-radius: 12px; font-size: 13px; line-height: 1.5; }
+.alert-dialog .button { min-width: 140px; }
 
 /* ---------- Bingkai ornamen ---------- */
 .ornament-corner { position: absolute; top: 0; right: 0; z-index: 0; width: clamp(210px, 32vw, 440px); pointer-events: none; }

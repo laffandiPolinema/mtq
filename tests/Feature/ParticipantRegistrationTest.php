@@ -20,7 +20,7 @@ class ParticipantRegistrationTest extends TestCase
     {
         parent::setUp();
 
-        // Tanggal di dalam masa pendaftaran (7 November – 24 Desember 2026).
+        // Tanggal di dalam masa pendaftaran (9 November – 24 Desember 2026).
         Storage::fake('local');
         $this->travelTo(Carbon::parse('2026-11-20 10:00:00'));
     }
@@ -30,7 +30,8 @@ class ParticipantRegistrationTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertSee('Tilawah Al-Qur’an')
-            ->assertSee('Khot Indah Al-Qur’an')
+            ->assertSee('MKQ (Khattil Qur’an)')
+            ->assertSee('Murottal')
             ->assertSee('26–27 Desember 2026')
             ->assertSee('07.30 WIB')
             ->assertSee('Malang Creative Center');
@@ -103,24 +104,24 @@ class ParticipantRegistrationTest extends TestCase
         }
     }
 
-    public function test_khot_indah_cannot_be_chosen_until_its_rules_are_announced(): void
+    public function test_mkq_cannot_be_chosen_until_its_fee_is_announced(): void
     {
         $this->get('/')
-            ->assertSee('Khot Indah Al-Qur’an (segera dibuka)')
-            ->assertSee('Ketentuan &amp; biaya segera diumumkan', false);
+            ->assertSee('MKQ (Khattil Qur’an) (segera dibuka)')
+            ->assertSee('Biaya &amp; pendaftaran segera dibuka', false);
 
         $this->post(route('registration.store'), [
             ...$this->validRegistration(),
             'branch' => 'khot_indah',
-            'category' => 'anak-anak',
+            'category' => 'umum',
         ])->assertSessionHasErrors('branch');
 
         $this->assertDatabaseCount('participants', 0);
     }
 
-    public function test_registration_is_only_accepted_between_7_november_and_24_december(): void
+    public function test_registration_is_only_accepted_between_9_november_and_24_december(): void
     {
-        $this->travelTo(Carbon::parse('2026-11-06 23:59:00'));
+        $this->travelTo(Carbon::parse('2026-11-08 23:59:00'));
         $this->get('/')->assertSee('Pendaftaran belum dibuka')->assertDontSee('Kirim pendaftaran');
         $this->post(route('registration.store'), $this->validRegistration())->assertSessionHasErrors('full_name');
 
@@ -134,6 +135,38 @@ class ParticipantRegistrationTest extends TestCase
         $this->post(route('registration.store'), $this->validRegistration())->assertRedirect();
 
         $this->assertDatabaseCount('participants', 1);
+    }
+
+    public function test_tilawah_dewasa_is_limited_to_41_years_on_the_event_day(): void
+    {
+        // Lomba 26 Desember 2026: lahir 26 Desember 1985 = tepat 41 tahun, sehari sebelumnya = 42 tahun.
+        $this->post(route('registration.store'), [
+            ...$this->validRegistration(),
+            'category' => 'dewasa',
+            'birth_date' => '1984-12-25',
+        ])->assertSessionHasErrors('birth_date');
+
+        $this->assertDatabaseCount('participants', 0);
+
+        $this->post(route('registration.store'), [
+            ...$this->validRegistration(),
+            'category' => 'dewasa',
+            'birth_date' => '1985-12-26',
+        ])->assertRedirect();
+
+        $this->assertDatabaseHas('participants', ['category' => 'dewasa', 'registration_fee' => 70000]);
+    }
+
+    public function test_validation_errors_are_shown_in_a_popup(): void
+    {
+        $this->get('/')->assertDontSee('data-open-on-load', false);
+
+        $this->from('/')
+            ->followingRedirects()
+            ->post(route('registration.store'), [...$this->validRegistration(), 'nik' => '123'])
+            ->assertSee('data-open-on-load', false)
+            ->assertSee('Periksa kembali isian Anda')
+            ->assertSee('NIK harus terdiri dari 16 digit angka.');
     }
 
     public function test_participants_who_registered_can_still_upload_proof_after_registration_closes(): void

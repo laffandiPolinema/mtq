@@ -18,32 +18,35 @@ return [
 
     'branches' => [
         'tilawah' => [
-            'label' => 'Tilawah Al-Qur’an',
+            'label' => 'MTQ (Tilawah Al-Qur’an)',
             'open' => true,
             'categories' => [
-                'anak-anak' => ['label' => 'Anak', 'description' => 'SD s.d. SMP kelas 8', 'fee' => 35000],
-                'remaja' => ['label' => 'Remaja', 'description' => 'SMP kelas 9 s.d. SMA kelas 12', 'fee' => 50000],
-                'dewasa' => ['label' => 'Dewasa', 'description' => 'Mahasiswa s.d. usia lanjut', 'fee' => 70000],
+                'anak-anak' => ['label' => 'Tilawah Anak', 'description' => 'SD/MI s.d. kelas 8 SMP/MTs', 'fee' => 35000],
+                'remaja' => ['label' => 'Tilawah Remaja', 'description' => 'Kelas 9 SMP/MTs s.d. kelas 12 SMA/MA', 'fee' => 50000],
+                'dewasa' => ['label' => 'Tilawah Dewasa', 'description' => 'Mahasiswa s.d. usia maks. 41 tahun', 'fee' => 70000, 'max_age' => 41],
             ],
         ],
         'mhq' => [
-            'label' => 'MHQ Juz 30',
+            'label' => 'MHQ (Hifdzil Qur’an)',
             'open' => true,
             'categories' => [
-                'anak-anak' => ['label' => 'Anak', 'description' => 'Tingkat SD', 'fee' => 35000],
+                'anak-anak' => ['label' => 'Juz 30', 'description' => 'SD/MI', 'fee' => 35000],
+            ],
+        ],
+        'khot_indah' => [
+            'label' => 'MKQ (Khattil Qur’an)',
+            // Buka setelah biaya pendaftaran MKQ diputuskan: isi 'fee' lalu ubah 'open' menjadi true.
+            'open' => false,
+            'categories' => [
+                'umum' => ['label' => 'Umum', 'description' => 'Kaligrafi mushaf, khat Naskhi', 'fee' => null],
             ],
         ],
         'murottal' => [
             'label' => 'Murottal',
             'open' => true,
             'categories' => [
-                'anak-anak' => ['label' => 'Anak', 'description' => 'Tingkat SD', 'fee' => 35000],
+                'anak-anak' => ['label' => 'Tartil Anak', 'description' => 'SD/MI s.d. kelas 8 SMP/MTs', 'fee' => 35000],
             ],
-        ],
-        'khot_indah' => [
-            'label' => 'Khot Indah Al-Qur’an',
-            'open' => false,
-            'categories' => [],
         ],
     ],
 
@@ -58,8 +61,11 @@ return [
     |
     */
 
-    'registration_opens_at' => '2026-11-07 00:00:00',
+    'registration_opens_at' => '2026-11-09 00:00:00',
     'registration_closes_at' => '2026-12-24 23:59:59',
+
+    /** Hari pertama lomba; acuan perhitungan batas usia kategori. */
+    'event_date' => '2026-12-26',
 
     /** Technical meeting H-5 sebelum lomba (26 Desember 2026). */
     'technical_meeting_date' => '2026-12-21',

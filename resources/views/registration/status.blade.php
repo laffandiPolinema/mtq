@@ -35,12 +35,12 @@
                         <label class="upload-drop" for="identity_document">
                             <span class="upload-icon" aria-hidden="true">⬆</span>
                             <span><strong>Ganti identitas diri</strong><small data-file-label>JPG, PNG, PDF · maks. 5 MB</small></span>
-                            <input id="identity_document" name="identity_document" type="file" accept="image/jpeg,image/png,image/webp,application/pdf">
+                            <input id="identity_document" name="identity_document" type="file" data-max-mb="5" data-label="Identitas diri" accept="image/jpeg,image/png,image/webp,application/pdf">
                         </label>
                         <label class="upload-drop" for="photo">
                             <span class="upload-icon" aria-hidden="true">⬆</span>
                             <span><strong>Ganti pasfoto 3x4</strong><small data-file-label>JPG, PNG · maks. 2 MB</small></span>
-                            <input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp">
+                            <input id="photo" name="photo" type="file" data-max-mb="2" data-label="Pasfoto" accept="image/jpeg,image/png,image/webp">
                         </label>
                     </div>
                     @foreach (['documents', 'identity_document', 'photo'] as $field)

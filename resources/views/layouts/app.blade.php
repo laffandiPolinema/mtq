@@ -39,12 +39,23 @@
         @yield('content')
     </main>
 
+    <dialog class="alert-dialog" id="alert-dialog" aria-labelledby="alert-dialog-title" @if ($errors->any()) data-open-on-load @endif>
+        <div class="alert-dialog-icon" aria-hidden="true">!</div>
+        <h2 id="alert-dialog-title">Periksa kembali isian Anda</h2>
+        <ul data-alert-messages>
+            @foreach (array_unique($errors->all()) as $message)
+                <li>{{ $message }}</li>
+            @endforeach
+        </ul>
+        <form method="dialog"><button class="button button-primary" type="submit" autofocus>Mengerti</button></form>
+    </dialog>
+
     <footer class="site-footer">
         <div class="footer-inner">
             <div class="footer-brand">
                 <h2 class="display-title">Terima kasih!</h2>
                 <p><strong>MTQ Tingkat Kota Malang 2026</strong><br>Diselenggarakan PHBI &amp; Ketakmiran Masjid Jami’ Blimbing</p>
-                <p class="footer-meta">26–27 Desember 2026 · Mulai 07.30 WIB · Malang Creative Center</p>
+                <p class="footer-meta">26–27 Desember 2026 · Mulai 07.30 WIB · Malang Creative Center (MCC) Lt. 2</p>
             </div>
             <div class="footer-contacts">
                 <span class="section-kicker">Informasi kontak</span>

@@ -31,14 +31,11 @@ class RegistrationDocumentController extends Controller
             return back()->withErrors(['documents' => 'Pilih minimal satu dokumen yang akan diganti.']);
         }
 
-        $replaced = [];
-
         foreach (['identity_document' => ['identity_document_path', 'identity-documents'], 'photo' => ['photo_path', 'photos']] as $field => [$column, $directory]) {
             if ($request->hasFile($field)) {
-                $stored = $documents->store($request->file($field), $directory, $field, passPhoto: $field === 'photo');
+                $stored = $documents->store($request->file($field), $directory, $field);
                 $documents->delete($participant->{$column});
                 $participant->{$column} = $stored['path'];
-                $replaced[] = $field;
             }
         }
 

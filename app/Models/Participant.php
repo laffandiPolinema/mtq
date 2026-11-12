@@ -67,7 +67,7 @@ class Participant extends Model
      * Dokumen persyaratan yang diunggah peserta: kolom path => label.
      */
     public const DOCUMENTS = [
-        'identity_document_path' => 'Identitas diri (KTP/Kartu Pelajar/KIA/Akta)',
+        'identity_document_path' => 'Identitas diri (KTP/Kartu Keluarga/Kartu Pelajar/KIA)',
         'photo_path' => 'Pasfoto 3x4',
         'payment_proof_path' => 'Bukti pembayaran',
     ];

@@ -80,11 +80,12 @@ class RegistrationController extends Controller
         ]);
 
         $this->ensureNikNotRegistered($validated['nik']);
+        $this->ensureAgeFitsCategory($validated);
 
         $identity = $documents->store($request->file('identity_document'), 'identity-documents', 'identity_document');
 
         try {
-            $photo = $documents->store($request->file('photo'), 'photos', 'photo', passPhoto: true);
+            $photo = $documents->store($request->file('photo'), 'photos', 'photo');
         } catch (\Throwable $exception) {
             $documents->delete($identity['path']);
 
@@ -138,6 +139,25 @@ class RegistrationController extends Controller
                     throw $exception;
                 }
             }
+        }
+    }
+
+    /**
+     * Batas usia kategori (mis. Tilawah Dewasa maks. 41 tahun) dihitung pada hari lomba.
+     *
+     * @param  array<string, mixed>  $validated
+     */
+    private function ensureAgeFitsCategory(array $validated): void
+    {
+        $category = Participant::categoriesFor($validated['branch'])[$validated['category']];
+        $maxAge = $category['max_age'] ?? null;
+        $eventDate = Carbon::parse(config('mtq.event_date'));
+        $age = (int) Carbon::parse($validated['birth_date'])->diffInYears($eventDate);
+
+        if ($maxAge !== null && $age > $maxAge) {
+            throw ValidationException::withMessages([
+                'birth_date' => "Usia maksimal kategori {$category['label']} adalah {$maxAge} tahun pada hari lomba ({$eventDate->translatedFormat('d F Y')}). Usia peserta saat itu {$age} tahun.",
+            ]);
         }
     }
 

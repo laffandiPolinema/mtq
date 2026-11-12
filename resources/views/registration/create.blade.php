@@ -28,7 +28,7 @@
                 </div>
                 <div>
                     <span class="detail-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" fill="currentColor"/></svg></span>
-                    <span><small>Tempat</small><strong>Malang Creative Center (MCC)</strong></span>
+                    <span><small>Tempat</small><strong>Malang Creative Center (MCC) Lt. 2</strong></span>
                 </div>
                 <div>
                     <span class="detail-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8 1.5V8h4.5zM8 12h8v2H8zm0 4h8v2H8z" fill="currentColor"/></svg></span>
@@ -104,7 +104,12 @@
                             @endforeach
                         </ul>
                     @else
-                        <p class="soon-badge">Ketentuan &amp; biaya segera diumumkan</p>
+                        <ul class="branch-fees">
+                            @foreach ($branch['categories'] as $category)
+                                <li><span><strong>{{ $category['label'] }}</strong><small>{{ $category['description'] }}</small></span></li>
+                            @endforeach
+                        </ul>
+                        <p class="soon-badge">Biaya &amp; pendaftaran segera dibuka</p>
                     @endif
                 </article>
             @endforeach
@@ -245,7 +250,7 @@
                     <select id="category" name="category" required data-selected="{{ old('category') }}">
                         <option value="">Pilih cabang lomba terlebih dahulu</option>
                     </select>
-                    <small class="field-hint">Tilawah: Anak (SD s.d. SMP kelas 8), Remaja (SMP kelas 9 s.d. SMA), Dewasa (mahasiswa s.d. usia lanjut). Cabang lain: tingkat SD.</small>
+                    <small class="field-hint">MTQ Tilawah: Anak (SD/MI s.d. kelas 8 SMP/MTs), Remaja (kelas 9 SMP/MTs s.d. kelas 12 SMA/MA), Dewasa (mahasiswa s.d. usia maks. 41 tahun). MHQ Juz 30: SD/MI. Murottal Tartil Anak: SD/MI s.d. kelas 8 SMP/MTs.</small>
                     @error('category') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
             </div>
@@ -256,16 +261,16 @@
                 <div class="field">
                     <label class="upload-drop" for="identity_document">
                         <span class="upload-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 5h18v14H3zm2 2v10h14V7zm2 2h4v4H7zm6 0h4v1.5h-4zm0 3h4v1.5h-4zm-6 3h10v1.5H7z" fill="currentColor"/></svg></span>
-                        <span><strong>Identitas diri <span class="required">*</span></strong><small data-file-label>KTP / Kartu Pelajar / KIA / Akta Kelahiran · JPG, PNG, PDF · maks. 5 MB</small></span>
-                        <input id="identity_document" name="identity_document" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" required>
+                        <span><strong>Identitas diri <span class="required">*</span></strong><small data-file-label>KTP / Kartu Keluarga (bukti domisili Kota Malang), atau Kartu Pelajar / KIA · JPG, PNG, PDF · maks. 5 MB</small></span>
+                        <input id="identity_document" name="identity_document" type="file" data-max-mb="5" data-label="Identitas diri" accept="image/jpeg,image/png,image/webp,application/pdf" required>
                     </label>
                     @error('identity_document') <small class="field-error">{{ $message }}</small> @enderror
                 </div>
                 <div class="field">
                     <label class="upload-drop" for="photo">
                         <span class="upload-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-4 0-8 2-8 5v1h16v-1c0-3-4-5-8-5z" fill="currentColor"/></svg></span>
-                        <span><strong>Pasfoto terbaru 3x4 <span class="required">*</span></strong><small data-file-label>Posisi tegak · JPG, PNG · maks. 2 MB</small></span>
-                        <input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" required>
+                        <span><strong>Pasfoto terbaru 3x4 <span class="required">*</span></strong><small data-file-label>JPG, PNG, WEBP · maks. 2 MB</small></span>
+                        <input id="photo" name="photo" type="file" data-max-mb="2" data-label="Pasfoto" accept="image/jpeg,image/png,image/webp" required>
                     </label>
                     @error('photo') <small class="field-error">{{ $message }}</small> @enderror
                 </div>

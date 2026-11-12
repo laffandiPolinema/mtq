@@ -87,14 +87,32 @@ class RegistrationDocumentSecurityTest extends TestCase
         $this->assertSame([], Storage::disk('local')->allFiles());
     }
 
-    public function test_pass_photo_must_be_portrait_3x4(): void
+    public function test_photos_are_only_checked_for_type_and_size_not_dimensions(): void
     {
         $this->post(route('registration.store'), $this->validRegistration([
-            'photo' => UploadedFile::fake()->image('pemandangan.jpg', 800, 450),
-        ]))->assertSessionHasErrors('photo');
+            'photo' => UploadedFile::fake()->image('pasfoto-landscape.png', 800, 450),
+            'identity_document' => UploadedFile::fake()->image('kk-kecil.jpg', 120, 80),
+        ]))->assertRedirect();
 
-        $this->assertDatabaseCount('participants', 0);
-        $this->assertSame([], Storage::disk('local')->allFiles());
+        $this->assertDatabaseCount('participants', 1);
+
+        $this->post(route('registration.store'), $this->validRegistration([
+            'photo' => UploadedFile::fake()->image('pasfoto.jpg', 300, 400)->size(2049),
+        ]))->assertSessionHasErrors(['photo' => 'Ukuran pasfoto maksimal 2 MB.']);
+    }
+
+    public function test_very_large_camera_photos_are_kept_as_is_but_still_encrypted(): void
+    {
+        $large = UploadedFile::fake()->image('foto-hp.png', 6000, 4500);
+
+        $this->post(route('registration.store'), $this->validRegistration(['photo' => $large]))->assertRedirect();
+
+        $path = Participant::firstOrFail()->photo_path;
+        $stored = Storage::disk('local')->get($path);
+
+        $this->assertStringEndsWith('.png.enc', $path);
+        $this->assertStringNotContainsString("\x89PNG", $stored);
+        $this->assertSame(file_get_contents($large->getRealPath()), Crypt::decryptString($stored));
     }
 
     public function test_images_are_rewritten_so_hidden_payloads_are_removed(): void

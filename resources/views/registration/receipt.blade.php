@@ -141,7 +141,7 @@
         </div>
 
         <div class="footer">
-            <div><strong>Pelaksanaan</strong><br>Sabtu–Minggu, 26–27 Desember 2026<br>Pukul 07.30 WIB s.d. selesai<br>Malang Creative Center (MCC), Blimbing</div>
+            <div><strong>Pelaksanaan</strong><br>Sabtu–Minggu, 26–27 Desember 2026<br>Pukul 07.30 WIB s.d. selesai<br>Malang Creative Center (MCC) Lt. 2, Blimbing</div>
             <div><strong>Kontak panitia</strong><br>@foreach (config('mtq.contacts') as $contact){{ $contact['name'] }} · {{ implode('.', str_split($contact['phone'], 3)) }}<br>@endforeach</div>
             <div style="text-align: right;"><strong>Dicetak</strong><br>{{ now()->translatedFormat('d F Y, H.i') }} WIB</div>
         </div>
