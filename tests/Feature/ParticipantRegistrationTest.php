@@ -165,14 +165,6 @@ class ParticipantRegistrationTest extends TestCase
             ->assertSee('NIK harus terdiri dari 16 digit angka.');
     }
 
-    public function test_participants_living_outside_the_five_districts_can_choose_lain_lain(): void
-    {
-        $this->post(route('registration.store'), [...$this->validRegistration(), 'district' => 'Lain-lain'])
-            ->assertRedirect();
-
-        $this->assertDatabaseHas('participants', ['district' => 'Lain-lain']);
-    }
-
     public function test_an_upload_larger_than_the_server_limit_is_explained_in_a_popup(): void
     {
         $this->call('POST', route('registration.store'), server: ['CONTENT_LENGTH' => 200 * 1024 * 1024])

@@ -48,7 +48,6 @@ class Participant extends Model
         'Klojen',
         'Lowokwaru',
         'Sukun',
-        'Lain-lain',
     ];
 
     public const STATUSES = [

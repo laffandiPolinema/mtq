@@ -27,7 +27,7 @@
                     <div><dt>NIK</dt><dd>{{ $participant->nik ?? '—' }}</dd></div>
                     <div><dt>Tanggal lahir</dt><dd>{{ $participant->birth_place ? $participant->birth_place.', ' : '' }}{{ $participant->birth_date->translatedFormat('d F Y') }}</dd></div>
                     <div><dt>Jenis kelamin</dt><dd>{{ $participant->gender === 'male' ? 'Laki-laki' : 'Perempuan' }}</dd></div>
-                    <div><dt>Alamat domisili</dt><dd>{{ $participant->address }}{{ $participant->district === 'Lain-lain' ? '' : ', Kec. '.$participant->district }}</dd></div>
+                    <div><dt>Alamat domisili</dt><dd>{{ $participant->address }}, Kec. {{ $participant->district }}</dd></div>
                     <div><dt>WhatsApp</dt><dd>{{ $participant->phone }}</dd></div>
                     <div><dt>Asal sekolah/lembaga</dt><dd>{{ $participant->institution ?: '—' }}</dd></div>
                     <div><dt>Alamat sekolah</dt><dd>{{ $participant->school_address ?: '—' }}</dd></div>
