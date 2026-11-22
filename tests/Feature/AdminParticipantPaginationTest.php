@@ -20,7 +20,7 @@ class AdminParticipantPaginationTest extends TestCase
             ->get(route('admin.participants.index', ['district' => 'Klojen']))
             ->assertOk()
             ->assertSee('Menampilkan')
-            ->assertSee('href="/admin/peserta?district=Klojen&amp;page=2"', false)
+            ->assertSee('href="?district=Klojen&amp;page=2"', false)
             ->assertDontSee('pagination.previous');
 
         $secondPage = $this->actingAs($admin)

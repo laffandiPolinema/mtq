@@ -20,7 +20,8 @@ class AdminParticipantController extends Controller
             ->latest()
             ->latest('id')
             ->paginate(15)
-            ->withPath(route('admin.participants.index', absolute: false))
+            // Link cukup "?page=2" agar tetap benar di belakang proxy/ingress atau sub-path (mis. /mtq).
+            ->withPath('')
             ->withQueryString();
 
         $verifiedPayments = Participant::where('payment_status', 'verified');
