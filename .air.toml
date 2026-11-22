@@ -1,0 +1,28 @@
+#:schema https://json.schemastore.org/any.json
+
+# Konfigurasi `air` untuk project Laravel (bukan Go).
+# Menjalankan `composer run dev` (server Laravel, Vite, queue, dan log sekaligus).
+# Perubahan kode PHP/Blade/CSS/JS sudah langsung terbaca tanpa restart, jadi air
+# hanya me-restart server jika `.env` atau file di folder `config/` berubah.
+
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  cmd = "php artisan config:clear"
+  entrypoint = ["composer", "run", "dev"]
+  include_ext = ["php", "env"]
+  include_dir = ["config"]
+  include_file = [".env"]
+  exclude_dir = ["vendor", "node_modules", "storage", "public", "tmp", "tests", "database", "resources", "app", "routes", "bootstrap"]
+  delay = 1000
+  send_interrupt = true
+  kill_delay = "3s"
+  stop_on_error = true
+  log = "air-errors.log"
+
+[misc]
+  clean_on_exit = true
+
+[log]
+  time = false
