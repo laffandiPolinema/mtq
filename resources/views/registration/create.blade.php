@@ -41,6 +41,7 @@
                 @if ($period['status'] === 'open')
                     <a class="button button-primary" href="#daftar">Daftar sekarang <span aria-hidden="true">→</span></a>
                 @endif
+                <a class="button button-outline" href="#juknis">Baca juknis</a>
                 <a class="button button-outline" href="{{ route('status.form') }}">Cek status &amp; pembayaran</a>
             </div>
         </div>
@@ -112,6 +113,8 @@
         </div>
     </section>
 
+    @include('partials.juknis')
+
     <section class="content-section fee-section" id="biaya">
         <div class="fee-card">
             <span class="section-kicker">Biaya pendaftaran</span>
@@ -142,6 +145,7 @@
             <h2 class="display-title">Formulir<br>pendaftaran</h2>
             <p>Isi data peserta dengan benar. Setelah formulir terkirim Anda akan mendapat <strong>kode pendaftaran</strong> dan <strong>nominal transfer unik</strong>.</p>
             <div class="privacy-note"><span>✓</span><p>Data digunakan panitia untuk keperluan registrasi dan verifikasi peserta.</p></div>
+            <a class="juknis-reminder" href="#juknis"><span aria-hidden="true">📘</span><span>Pastikan sudah membaca <strong>juknis perlombaan</strong> sebelum mengisi formulir.</span></a>
         </div>
 
         @if ($period['status'] !== 'open')
