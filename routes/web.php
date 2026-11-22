@@ -3,7 +3,9 @@
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminCompetitionBranchController;
 use App\Http\Controllers\AdminCompetitionCategoryController;
+use App\Http\Controllers\AdminJuknisController;
 use App\Http\Controllers\AdminParticipantController;
+use App\Http\Controllers\JuknisController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\RegistrationDocumentController;
 use App\Http\Controllers\RegistrationPaymentController;
@@ -12,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [RegistrationController::class, 'create'])->name('home');
 Route::post('/pendaftaran', [RegistrationController::class, 'store'])->middleware('throttle:10,1')->name('registration.store');
+Route::get('/juknis', [JuknisController::class, 'show'])->name('juknis.show');
 Route::get('/status', [RegistrationController::class, 'statusForm'])->name('status.form');
 Route::post('/status', [RegistrationController::class, 'lookupStatus'])->middleware('throttle:10,1')->name('status.lookup');
 
@@ -39,6 +42,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         ->shallow()
         ->parameters(['cabang' => 'branch', 'kategori' => 'category'])
         ->names('branches.categories');
+
+    Route::get('/juknis', [AdminJuknisController::class, 'edit'])->name('juknis.edit');
+    Route::post('/juknis', [AdminJuknisController::class, 'update'])->name('juknis.update');
+    Route::delete('/juknis', [AdminJuknisController::class, 'destroy'])->name('juknis.destroy');
 
     Route::get('/peserta', [AdminParticipantController::class, 'index'])->name('participants.index');
     Route::get('/peserta/laporan', [AdminParticipantController::class, 'export'])->name('participants.export');

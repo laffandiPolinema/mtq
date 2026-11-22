@@ -1,5 +1,7 @@
 @php
-    $juknisPdf = asset('files/juknis-mtq-kota-malang-2026.pdf');
+    $juknisDocument = app(\App\Services\JuknisDocument::class);
+    $juknisPdf = $juknisDocument->url();
+    $juknisDownload = route('juknis.show', ['v' => $juknisDocument->updatedAt()?->timestamp, 'unduh' => 1]);
 
     $generalRules = [
         'Peserta diizinkan mengikuti perlombaan setelah mengisi registrasi ulang yang disediakan panitia.',
@@ -139,14 +141,14 @@
             </span>
             <div class="juknis-doc-text">
                 <strong>Juknis Perlombaan MTQ Kota Malang 2026</strong>
-                <small>PDF · 10 halaman · {{ number_format(filesize(public_path('files/juknis-mtq-kota-malang-2026.pdf')) / 1024 / 1024, 1, ',', '.') }} MB</small>
+                <small>PDF · {{ $juknisDocument->sizeLabel() }} · diperbarui {{ $juknisDocument->updatedAt()?->translatedFormat('j F Y') }}</small>
             </div>
             <div class="juknis-doc-actions">
                 <a class="button button-primary button-compact" href="{{ $juknisPdf }}" target="_blank" rel="noopener">
                     <svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-5 0-9 4.5-10 7 1 2.5 5 7 10 7s9-4.5 10-7c-1-2.5-5-7-10-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0-2a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="currentColor"/></svg>
                     Baca juknis
                 </a>
-                <a class="button button-outline button-compact" href="{{ $juknisPdf }}" download="Juknis MTQ Kota Malang 2026.pdf">
+                <a class="button button-outline button-compact" href="{{ $juknisDownload }}">
                     <svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 3h2v9.2l3.3-3.3 1.4 1.4L12 16 6.3 10.3l1.4-1.4 3.3 3.3zM5 18h14v2H5z" fill="currentColor"/></svg>
                     Unduh PDF
                 </a>
@@ -255,7 +257,7 @@
             @if ($period['status'] === 'open')
                 <a class="button button-primary" href="#daftar">Daftar sekarang <span aria-hidden="true">→</span></a>
             @endif
-            <a class="button button-outline" href="{{ $juknisPdf }}" download="Juknis MTQ Kota Malang 2026.pdf">Unduh juknis (PDF)</a>
+            <a class="button button-outline" href="{{ $juknisDownload }}">Unduh juknis (PDF)</a>
         </div>
     </div>
 </section>

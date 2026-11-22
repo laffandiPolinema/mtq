@@ -485,6 +485,14 @@ a.document-empty { color: var(--green); }
 .juknis-reminder { display: flex; gap: 12px; align-items: center; margin-top: 12px; padding: 14px 16px; color: var(--ink); background: #fff8e3; border: 1px solid #f0dc9f; border-radius: 16px; font-size: 12px; line-height: 1.6; }
 .juknis-reminder strong { color: var(--green-dark); text-decoration: underline; }
 
+.juknis-current { display: flex; align-items: center; gap: 16px; margin: 18px 0; padding: 16px 18px; background: var(--green-soft); border-radius: 18px; }
+.juknis-current > div { flex: 1; display: grid; gap: 2px; }
+.juknis-current strong { color: var(--green-dark); font-size: 15px; }
+.juknis-current small { color: var(--muted); font-size: 12px; }
+.juknis-current .juknis-doc-icon { width: 48px; height: 48px; flex: none; }
+.juknis-upload-form { display: grid; gap: 14px; justify-items: start; }
+.juknis-upload-form .field { width: 100%; }
+
 /* ---------- Responsif ---------- */
 @media (max-width: 980px) {
     .hero { grid-template-columns: 1fr; padding-top: 50px; }

@@ -52,7 +52,9 @@ function fileProblem(input, file) {
     const maxMb = Number(input.dataset.maxMb || 0);
 
     if (accepted.length > 0 && !accepted.includes(file.type)) {
-        const allowed = accepted.includes('application/pdf') ? 'JPG, PNG, WEBP, atau PDF' : 'JPG, PNG, atau WEBP';
+        const allowed = accepted.length === 1 && accepted[0] === 'application/pdf'
+            ? 'file PDF'
+            : (accepted.includes('application/pdf') ? 'JPG, PNG, WEBP, atau PDF' : 'JPG, PNG, atau WEBP');
         return `${label}: jenis file "${file.name}" tidak didukung. Gunakan ${allowed}.`;
     }
 

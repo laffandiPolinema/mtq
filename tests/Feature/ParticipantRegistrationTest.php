@@ -44,7 +44,7 @@ class ParticipantRegistrationTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertSee('id="juknis"', false)
-            ->assertSee(asset('files/juknis-mtq-kota-malang-2026.pdf'), false)
+            ->assertSee(route('juknis.show'), false)
             ->assertSeeInOrder(['Ketentuan umum', 'MTQ', 'MHQ', 'MKQ', 'Murottal'])
             ->assertSee('Kaidah khat')
             ->assertSee('Tahfidz');
