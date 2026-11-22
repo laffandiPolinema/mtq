@@ -55,6 +55,6 @@
                 </tbody>
             </table>
         </div>
-        <div class="pagination-wrap">{{ $participants->links() }}</div>
+        <div class="pagination-wrap">{{ $participants->links('partials.pagination') }}</div>
     </section>
 @endsection

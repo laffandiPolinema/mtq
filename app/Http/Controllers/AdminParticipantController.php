@@ -18,7 +18,9 @@ class AdminParticipantController extends Controller
     {
         $participants = $this->filteredParticipants($request)
             ->latest()
+            ->latest('id')
             ->paginate(15)
+            ->withPath(route('admin.participants.index', absolute: false))
             ->withQueryString();
 
         $verifiedPayments = Participant::where('payment_status', 'verified');
