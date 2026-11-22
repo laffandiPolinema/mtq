@@ -372,6 +372,8 @@ main { position: relative; z-index: 1; }
 .participant-table { width: 100%; border-collapse: collapse; text-align: left; }
 .participant-table th { padding: 14px 16px; color: #6b716d; background: #f7f6f1; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
 .participant-table td { padding: 14px 16px; border-top: 1px solid #efece4; color: #4d5550; font-size: 13px; white-space: nowrap; }
+.participant-table td.cell-branch { min-width: 200px; white-space: normal; }
+.participant-table td.cell-branch small { line-height: 1.45; }
 .participant-table td > strong, .participant-table td > small { display: block; }
 .participant-table td > strong { color: var(--ink); }
 .participant-table td > small { margin-top: 4px; color: #8b928e; font-size: 11px; }

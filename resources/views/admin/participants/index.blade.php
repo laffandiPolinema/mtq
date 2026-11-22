@@ -42,7 +42,7 @@
                     @forelse ($participants as $participant)
                         <tr>
                             <td><strong>{{ $participant->full_name }}</strong><small>{{ $participant->registration_code }} · {{ $participant->created_at->format('d/m/Y') }}</small></td>
-                            <td>{{ $participant->branchLabel() }}<small>{{ $participant->categoryLabel() ?? '—' }}</small></td>
+                            <td class="cell-branch">{{ $participant->branchLabel() }}<small>{{ $participant->categoryLabel() ?? '—' }}</small></td>
                             <td>{{ $participant->district }}</td>
                             <td><strong class="amount">{{ substr($participant->formattedPaymentAmount(), 0, -3) }}<em>{{ substr($participant->formattedPaymentAmount(), -3) }}</em></strong></td>
                             <td><span class="status-pill payment-{{ $participant->payment_status }}">{{ $participant->paymentStatusLabel() }}</span></td>
