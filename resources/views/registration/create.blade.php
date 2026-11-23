@@ -35,7 +35,7 @@
                 </div>
                 <div>
                     <span class="detail-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-8 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 2c-2.7 0-8 1.3-8 4v2h10v-2c0-1 .4-1.9 1.1-2.6C10 13.2 8.8 13 8 13zm8 0c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z" fill="currentColor"/></svg></span>
-                    <span><small>Technical meeting{{ $schedule->technicalMeetingOffset() ? ' ('.$schedule->technicalMeetingOffset().')' : '' }}</small><strong>{{ $schedule->technicalMeetingLabel() }}</strong></span>
+                    <span><small>Technical meeting{{ $schedule->technicalMeetingOffset() ? ' ('.$schedule->technicalMeetingOffset().')' : '' }}</small><strong>{{ $schedule->technicalMeetingLabel() }}</strong>@if ($schedule->technicalMeetingNote() !== '')<small class="detail-note">{{ $schedule->technicalMeetingNote() }}</small>@endif</span>
                 </div>
             </div>
             <div class="hero-actions">

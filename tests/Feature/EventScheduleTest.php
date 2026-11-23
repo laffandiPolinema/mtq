@@ -68,7 +68,8 @@ class EventScheduleTest extends TestCase
             ->assertSee('Pukul 08.00 WIB s.d. selesai')
             ->assertSee('Aula Balai Kota Lt. 3')
             ->assertSee('(H-7) pada', false)
-            ->assertSee('Sabtu, 26 Desember 2026');
+            ->assertSee('Sabtu, 26 Desember 2026')
+            ->assertSee('(di Masjid Jami’)');
     }
 
     public function test_the_category_age_limit_follows_the_new_first_day_of_the_event(): void

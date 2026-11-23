@@ -37,17 +37,17 @@ class ParticipantRegistrationTest extends TestCase
             ->assertSee('Malang Creative Center');
     }
 
-    public function test_the_landing_page_shows_the_juknis_with_a_downloadable_pdf(): void
+    public function test_the_landing_page_shows_only_the_juknis_pdf_preview_and_download(): void
     {
         $this->assertFileExists(public_path('files/juknis-mtq-kota-malang-2026.pdf'));
 
         $this->get('/')
             ->assertOk()
             ->assertSee('id="juknis"', false)
-            ->assertSee(route('juknis.show'), false)
-            ->assertSeeInOrder(['Ketentuan umum', 'MTQ', 'MHQ', 'MKQ', 'Murottal'])
-            ->assertSee('Kaidah khat')
-            ->assertSee('Tahfidz');
+            ->assertSee('<iframe src="'.route('juknis.show'), false)
+            ->assertSee('unduh=1', false)
+            ->assertDontSee('Ketentuan umum')
+            ->assertDontSee('Kriteria penilaian');
     }
 
     public function test_a_participant_can_register_and_check_their_status(): void
