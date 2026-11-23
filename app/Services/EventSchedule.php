@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 /**
  * Jadwal Technical Meeting dan pelaksanaan lomba.
  *
- * Panitia mengubahnya di panel admin (tab Juknis). Selama belum diubah, dipakai nilai
+ * Panitia mengubahnya di panel admin (tab Jadwal acara). Selama belum diubah, dipakai nilai
  * bawaan dari config/mtq.php. Semua tampilan (halaman utama, juknis, footer, bukti
  * pendaftaran) dan perhitungan batas usia membaca dari sini agar selalu seragam.
  */

@@ -25,7 +25,7 @@ return [
 
     /*
     | Jadwal bawaan Technical Meeting dan pelaksanaan lomba. Panitia dapat mengubahnya
-    | di panel admin (tab Juknis); nilai dari panel admin menggantikan nilai di bawah ini.
+    | di panel admin (tab Jadwal acara); nilai dari panel admin menggantikan nilai di bawah ini.
     */
 
     /** Hari pertama lomba; acuan perhitungan batas usia kategori. */
@@ -37,6 +37,22 @@ return [
     /** Technical meeting H-5 sebelum lomba (26 Desember 2026). */
     'technical_meeting_date' => '2026-12-21',
     'technical_meeting_note' => 'ambil nomor urut & maqra’',
+
+    /*
+    | Bagian "Dapatkan hadiah" di halaman utama. Nilai bawaan; panitia dapat
+    | mengubahnya di panel admin (tab Hadiah).
+    | Ikon: trophy, money, certificate, gift, medal, star.
+    */
+    'prizes' => [
+        'heading' => 'Dapatkan hadiah menarik',
+        'intro' => 'Tunjukkan kemampuan terbaikmu dan raih penghargaan untuk para juara MTQ Kota Malang 2026.',
+        'items' => [
+            ['icon' => 'trophy', 'title' => 'Tropi', 'description' => 'Untuk para juara setiap kategori lomba'],
+            ['icon' => 'money', 'title' => 'Uang pembinaan', 'description' => 'Bekal pembinaan bagi para juara'],
+            ['icon' => 'certificate', 'title' => 'Sertifikat', 'description' => 'Bukti prestasi dan keikutsertaan'],
+            ['icon' => 'gift', 'title' => 'Souvenir dari sponsor', 'description' => 'Kenang-kenangan dari para sponsor acara'],
+        ],
+    ],
 
     'bank' => [
         'name' => 'Bank Mandiri',

@@ -80,6 +80,32 @@
         </blockquote>
     </section>
 
+    @php($prizes = app(\App\Services\PrizeList::class))
+    @if ($prizes->items())
+        <section class="prize-section" id="hadiah" aria-labelledby="hadiah-title">
+            <div class="prize-band">
+                <div class="prize-heading">
+                    <span class="prize-kicker">Hadiah &amp; penghargaan</span>
+                    <h2 id="hadiah-title">{{ $prizes->heading() }}</h2>
+                    @if ($prizes->intro() !== '')<p>{{ $prizes->intro() }}</p>@endif
+                </div>
+                <ol class="prize-grid">
+                    @foreach ($prizes->items() as $prize)
+                        <li class="prize-card">
+                            <span class="prize-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="{{ $prizes->iconPath($prize['icon']) }}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                            <span class="prize-number">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                            <h3>{{ $prize['title'] }}</h3>
+                            @if ($prize['description'] !== '')<p>{{ $prize['description'] }}</p>@endif
+                        </li>
+                    @endforeach
+                </ol>
+                @if ($period['status'] === 'open')
+                    <a class="button button-light" href="#daftar">Daftar &amp; raih hadiahnya <span aria-hidden="true">→</span></a>
+                @endif
+            </div>
+        </section>
+    @endif
+
     <section class="content-section" id="cabang">
         <div class="section-heading">
             <div><span class="section-kicker">Ruang untuk bertumbuh</span><h2 class="display-title">Cabang perlombaan</h2></div>

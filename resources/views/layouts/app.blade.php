@@ -25,6 +25,7 @@
         </a>
         <nav class="main-nav" aria-label="Navigasi utama">
             <a href="{{ route('home') }}#cabang">Cabang lomba</a>
+            <a href="{{ route('home') }}#hadiah">Hadiah</a>
             <a href="{{ route('home') }}#juknis">Juknis</a>
             <a href="{{ route('home') }}#biaya">Biaya</a>
             <a href="{{ route('status.form') }}">Cek pendaftaran</a>

@@ -323,7 +323,7 @@ main { position: relative; z-index: 1; }
 /* ---------- Panel panitia ---------- */
 .admin-section { position: relative; max-width: 1240px; margin: auto; padding: 60px 32px 90px; }
 .back-link { display: inline-block; margin-bottom: 18px; }
-.admin-tabs { margin-bottom: 26px; display: inline-flex; gap: 4px; padding: 5px; background: #fff; border-radius: 999px; box-shadow: var(--shadow); }
+.admin-tabs { margin-bottom: 26px; display: inline-flex; flex-wrap: wrap; gap: 4px; padding: 5px; background: #fff; border-radius: 999px; box-shadow: var(--shadow); }
 .admin-tabs a { padding: 9px 18px; color: var(--muted); border-radius: 999px; font-size: 13px; font-weight: 700; }
 .admin-tabs a.active { color: #fff; background: var(--green); }
 .admin-section .admin-tabs + .back-link { display: block; }
@@ -499,6 +499,27 @@ a.document-empty { color: var(--green); }
 .schedule-fields .field-grid { grid-template-columns: 1fr 1fr; }
 .schedule-fields legend { padding: 0 6px; color: var(--green-dark); font-size: 13px; font-weight: 800; }
 
+/* ---------- Hadiah ---------- */
+.prize-section { position: relative; max-width: 1240px; margin: 60px auto 0; padding: 0 32px; }
+.prize-band { position: relative; overflow: hidden; padding: 56px 48px 52px; display: grid; justify-items: center; gap: 34px; color: #fff; text-align: center; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Cpath d='M17 3 L31 17 L17 31 L3 17 Z M7 7h20v20H7z' fill='none' stroke='%23fff' stroke-opacity='.08'/%3E%3C/svg%3E"), radial-gradient(ellipse at 50% 0, rgb(246 220 133 / .28), transparent 60%), linear-gradient(150deg, #0e6b3a, var(--green-deep)); border-radius: calc(var(--radius) + 8px); box-shadow: 0 30px 70px -30px rgb(6 51 29 / .7); }
+.prize-band::before, .prize-band::after { position: absolute; left: 0; right: 0; height: 8px; content: ''; background: var(--gold-gradient); }
+.prize-band::before { top: 0; }
+.prize-band::after { bottom: 0; }
+.prize-heading { max-width: 720px; }
+.prize-kicker { display: inline-block; padding: 8px 18px; color: var(--green-deep); font-size: 12px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; background: var(--gold-gradient); border-radius: 999px; box-shadow: 0 8px 20px -10px rgb(0 0 0 / .5); }
+.prize-heading h2 { margin: 16px 0 0; font-size: clamp(32px, 4.6vw, 58px); font-weight: 800; line-height: 1.02; letter-spacing: -.02em; text-transform: uppercase; background: linear-gradient(180deg, #fff 30%, var(--gold-light)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.prize-heading p { margin: 14px auto 0; max-width: 560px; color: #cfe0d6; font-size: 15px; line-height: 1.7; }
+.prize-grid { width: 100%; margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; }
+.prize-card { position: relative; padding: 30px 22px 26px; display: grid; justify-items: center; gap: 6px; background: rgb(255 255 255 / .07); border: 1px solid rgb(246 220 133 / .35); border-radius: var(--radius); transition: transform .2s, background .2s; }
+.prize-card:hover { transform: translateY(-4px); background: rgb(255 255 255 / .12); }
+.prize-icon { width: 78px; height: 78px; margin-bottom: 8px; display: grid; place-items: center; color: var(--green-deep); background: var(--gold-gradient); border-radius: 50%; box-shadow: 0 0 0 6px rgb(246 220 133 / .15), 0 14px 26px -12px rgb(0 0 0 / .6); }
+.prize-icon svg { width: 38px; height: 38px; }
+.prize-number { position: absolute; top: 14px; right: 18px; color: rgb(246 220 133 / .55); font-family: var(--font-serif); font-size: 20px; font-weight: 700; }
+.prize-card h3 { margin: 0; color: #fff; font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; }
+.prize-card p { margin: 0; color: #b7cdbf; font-size: 13px; line-height: 1.55; }
+.prize-row { display: grid; grid-template-columns: 26px minmax(150px, .8fr) 1fr 1.4fr; gap: 12px; align-items: end; }
+.prize-row-number { padding-bottom: 14px; color: var(--gold-dark); font-weight: 800; text-align: center; }
+
 /* ---------- Responsif ---------- */
 @media (max-width: 980px) {
     .hero { grid-template-columns: 1fr; padding-top: 50px; }
@@ -519,7 +540,7 @@ a.document-empty { color: var(--green); }
 @media (max-width: 680px) {
     .site-header { width: calc(100% - 24px); border-radius: 22px; flex-wrap: wrap; }
     .main-nav { width: 100%; justify-content: space-between; gap: 10px; font-size: 12px; }
-    .main-nav a:nth-child(1), .main-nav a:nth-child(3) { display: none; }
+    .main-nav a:nth-child(1), .main-nav a:nth-child(2), .main-nav a:nth-child(4) { display: none; }
     .hero { padding: 40px 20px 20px; }
     .ornament-corner-left { display: none; }
     .event-details > div { width: 100%; }
@@ -552,4 +573,13 @@ a.document-empty { color: var(--green); }
     .juknis-tab { flex: 1 1 auto; padding: 0 14px; font-size: 13px; }
     .juknis-footer { flex-direction: column; align-items: stretch; text-align: center; }
     .juknis-footer-actions .button { flex: 1; }
+    .prize-section { margin-top: 40px; padding: 0 14px; }
+    .prize-band { padding: 44px 20px 40px; }
+    .prize-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .prize-card { padding: 24px 12px 20px; }
+    .prize-icon { width: 62px; height: 62px; }
+    .prize-icon svg { width: 30px; height: 30px; }
+    .prize-card h3 { font-size: 15px; }
+    .prize-row { grid-template-columns: 1fr; gap: 8px; padding-bottom: 12px; border-bottom: 1px dashed var(--line); }
+    .prize-row-number { padding: 0; text-align: left; }
 }

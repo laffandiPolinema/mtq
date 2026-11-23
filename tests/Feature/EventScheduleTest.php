@@ -37,9 +37,13 @@ class EventScheduleTest extends TestCase
 
     public function test_changing_the_schedule_updates_every_place_it_is_shown(): void
     {
-        $this->actingAs(User::factory()->create())
-            ->put(route('admin.juknis.schedule'), $this->newSchedule())
-            ->assertRedirect(route('admin.juknis.edit'))
+        $admin = User::factory()->create();
+
+        $this->actingAs($admin)->get(route('admin.schedule.edit'))->assertOk()->assertSee('Simpan jadwal');
+
+        $this->actingAs($admin)
+            ->put(route('admin.schedule.update'), $this->newSchedule())
+            ->assertRedirect(route('admin.schedule.edit'))
             ->assertSessionHas('success');
 
         auth()->logout();
@@ -69,7 +73,7 @@ class EventScheduleTest extends TestCase
 
     public function test_the_category_age_limit_follows_the_new_first_day_of_the_event(): void
     {
-        $this->actingAs(User::factory()->create())->put(route('admin.juknis.schedule'), $this->newSchedule());
+        $this->actingAs(User::factory()->create())->put(route('admin.schedule.update'), $this->newSchedule());
         auth()->logout();
 
         // Berumur 42 tahun pada 1 Januari 2027: di bawah tanggal lama masih 41 tahun, di tanggal baru sudah 42.
@@ -95,12 +99,12 @@ class EventScheduleTest extends TestCase
         $admin = User::factory()->create();
 
         $this->actingAs($admin)
-            ->from(route('admin.juknis.edit'))
-            ->put(route('admin.juknis.schedule'), [...$this->newSchedule(), 'event_end_date' => '2027-01-01'])
+            ->from(route('admin.schedule.edit'))
+            ->put(route('admin.schedule.update'), [...$this->newSchedule(), 'event_end_date' => '2027-01-01'])
             ->assertSessionHasErrors('event_end_date');
 
         $this->actingAs($admin)
-            ->put(route('admin.juknis.schedule'), [...$this->newSchedule(), 'event_end_date' => ''])
+            ->put(route('admin.schedule.update'), [...$this->newSchedule(), 'event_end_date' => ''])
             ->assertSessionDoesntHaveErrors();
 
         $this->assertSame('Sabtu, 2 Januari 2027', app(EventSchedule::class)->eventDaysLabel());
@@ -108,7 +112,7 @@ class EventScheduleTest extends TestCase
 
     public function test_guests_cannot_change_the_schedule(): void
     {
-        $this->put(route('admin.juknis.schedule'), $this->newSchedule())->assertRedirect(route('login'));
+        $this->put(route('admin.schedule.update'), $this->newSchedule())->assertRedirect(route('login'));
 
         $this->get('/')->assertSee('Senin, 21 Desember 2026')->assertDontSee('Aula Balai Kota');
     }

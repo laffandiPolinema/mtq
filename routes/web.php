@@ -5,6 +5,8 @@ use App\Http\Controllers\AdminCompetitionBranchController;
 use App\Http\Controllers\AdminCompetitionCategoryController;
 use App\Http\Controllers\AdminJuknisController;
 use App\Http\Controllers\AdminParticipantController;
+use App\Http\Controllers\AdminPrizeController;
+use App\Http\Controllers\AdminScheduleController;
 use App\Http\Controllers\JuknisController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\RegistrationDocumentController;
@@ -46,7 +48,12 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/juknis', [AdminJuknisController::class, 'edit'])->name('juknis.edit');
     Route::post('/juknis', [AdminJuknisController::class, 'update'])->name('juknis.update');
     Route::delete('/juknis', [AdminJuknisController::class, 'destroy'])->name('juknis.destroy');
-    Route::put('/juknis/jadwal', [AdminJuknisController::class, 'updateSchedule'])->name('juknis.schedule');
+
+    Route::get('/jadwal', [AdminScheduleController::class, 'edit'])->name('schedule.edit');
+    Route::put('/jadwal', [AdminScheduleController::class, 'update'])->name('schedule.update');
+
+    Route::get('/hadiah', [AdminPrizeController::class, 'edit'])->name('prizes.edit');
+    Route::put('/hadiah', [AdminPrizeController::class, 'update'])->name('prizes.update');
 
     Route::get('/peserta', [AdminParticipantController::class, 'index'])->name('participants.index');
     Route::get('/peserta/laporan', [AdminParticipantController::class, 'export'])->name('participants.export');
