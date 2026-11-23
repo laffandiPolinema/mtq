@@ -23,11 +23,20 @@ return [
     'registration_opens_at' => '2026-11-09 00:00:00',
     'registration_closes_at' => '2026-12-24 23:59:59',
 
+    /*
+    | Jadwal bawaan Technical Meeting dan pelaksanaan lomba. Panitia dapat mengubahnya
+    | di panel admin (tab Juknis); nilai dari panel admin menggantikan nilai di bawah ini.
+    */
+
     /** Hari pertama lomba; acuan perhitungan batas usia kategori. */
     'event_date' => '2026-12-26',
+    'event_end_date' => '2026-12-27',
+    'event_time' => '07.30 WIB s.d. selesai',
+    'event_place' => 'Malang Creative Center (MCC) Lt. 2',
 
     /** Technical meeting H-5 sebelum lomba (26 Desember 2026). */
     'technical_meeting_date' => '2026-12-21',
+    'technical_meeting_note' => 'ambil nomor urut & maqra’',
 
     'bank' => [
         'name' => 'Bank Mandiri',

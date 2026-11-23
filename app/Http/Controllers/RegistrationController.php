@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Middleware\EnsureParticipantAccess;
 use App\Models\CompetitionBranch;
 use App\Models\Participant;
+use App\Services\EventSchedule;
 use App\Services\ParticipantDocumentStore;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
@@ -152,7 +153,7 @@ class RegistrationController extends Controller
     {
         $category = Participant::categoriesFor($validated['branch'])[$validated['category']];
         $maxAge = $category['max_age'] ?? null;
-        $eventDate = Carbon::parse(config('mtq.event_date'));
+        $eventDate = app(EventSchedule::class)->eventStart();
         $age = (int) Carbon::parse($validated['birth_date'])->diffInYears($eventDate);
 
         if ($maxAge !== null && $age > $maxAge) {

@@ -492,6 +492,12 @@ a.document-empty { color: var(--green); }
 .juknis-current .juknis-doc-icon { width: 48px; height: 48px; flex: none; }
 .juknis-upload-form { display: grid; gap: 14px; justify-items: start; }
 .juknis-upload-form .field { width: 100%; }
+.juknis-admin { display: grid; gap: 22px; }
+.juknis-admin > .admin-tabs { justify-self: start; margin-bottom: 0; }
+.juknis-admin h2.display-title { margin: 6px 0 4px; font-size: clamp(24px, 3vw, 30px); }
+.schedule-fields { display: grid; gap: 14px; margin: 0; padding: 16px 18px 18px; border: 1.5px solid var(--line); border-radius: 16px; }
+.schedule-fields .field-grid { grid-template-columns: 1fr 1fr; }
+.schedule-fields legend { padding: 0 6px; color: var(--green-dark); font-size: 13px; font-weight: 800; }
 
 /* ---------- Responsif ---------- */
 @media (max-width: 980px) {
@@ -537,7 +543,7 @@ a.document-empty { color: var(--green); }
     .admin-heading { flex-direction: column; align-items: flex-start; }
     .panel .status-form, .reject-form { flex-direction: column; align-items: stretch; }
     .document-grid, .upload-grid { grid-template-columns: 1fr; }
-    .admin-form .field-grid { grid-template-columns: 1fr; }
+    .admin-form .field-grid, .schedule-fields .field-grid { grid-template-columns: 1fr; }
     .lantern-lg { width: 30px; }
     .lantern-sm { width: 20px; }
     .juknis-timeline, .juknis-grid, .juknis-grid-3 { grid-template-columns: 1fr; }

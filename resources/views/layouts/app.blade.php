@@ -56,7 +56,8 @@
             <div class="footer-brand">
                 <h2 class="display-title">Terima kasih!</h2>
                 <p><strong>MTQ Tingkat Kota Malang 2026</strong><br>Diselenggarakan PHBI &amp; Ketakmiran Masjid Jami’ Blimbing</p>
-                <p class="footer-meta">26–27 Desember 2026 · Mulai 07.30 WIB · Malang Creative Center (MCC) Lt. 2</p>
+                @php($footerSchedule = app(\App\Services\EventSchedule::class))
+                <p class="footer-meta">{{ $footerSchedule->eventDaysLabel(withDayNames: false) }} · {{ $footerSchedule->eventTime() }} · {{ $footerSchedule->eventPlace() }}</p>
             </div>
             <div class="footer-contacts">
                 <span class="section-kicker">Informasi kontak</span>

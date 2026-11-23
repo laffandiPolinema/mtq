@@ -135,13 +135,14 @@
             <ol>
                 <li>Transfer <strong>tepat {{ $amount }}</strong> (termasuk 3 digit kode unik) agar pembayaran dapat dikenali.</li>
                 <li>Unggah bukti transfer dan pantau status melalui menu <strong>Cek pendaftaran</strong> dengan nomor registrasi dan nomor WhatsApp terdaftar.</li>
-                <li>Ikuti <strong>technical meeting</strong> (H-5) pada <strong>{{ \Illuminate\Support\Carbon::parse(config('mtq.technical_meeting_date'))->translatedFormat('l, j F Y') }}</strong>; tempat dan waktu diumumkan panitia.</li>
+                @php($schedule = app(\App\Services\EventSchedule::class))
+                <li>Ikuti <strong>technical meeting</strong>{{ $schedule->technicalMeetingOffset() ? ' ('.$schedule->technicalMeetingOffset().')' : '' }} pada <strong>{{ $schedule->technicalMeetingLabel() }}</strong>; tempat dan waktu diumumkan panitia.</li>
                 <li>Simpan dokumen ini dan tunjukkan saat registrasi ulang pada hari pelaksanaan.</li>
             </ol>
         </div>
 
         <div class="footer">
-            <div><strong>Pelaksanaan</strong><br>Sabtu–Minggu, 26–27 Desember 2026<br>Pukul 07.30 WIB s.d. selesai<br>Malang Creative Center (MCC) Lt. 2, Blimbing</div>
+            <div><strong>Pelaksanaan</strong><br>{{ $schedule->eventDaysLabel() }}<br>Pukul {{ $schedule->eventTime() }}<br>{{ $schedule->eventPlace() }}</div>
             <div><strong>Kontak panitia</strong><br>@foreach (config('mtq.contacts') as $contact){{ $contact['name'] }} · {{ implode('.', str_split($contact['phone'], 3)) }}<br>@endforeach</div>
             <div style="text-align: right;"><strong>Dicetak</strong><br>{{ now()->translatedFormat('d F Y, H.i') }} WIB</div>
         </div>

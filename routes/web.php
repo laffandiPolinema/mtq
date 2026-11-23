@@ -46,6 +46,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/juknis', [AdminJuknisController::class, 'edit'])->name('juknis.edit');
     Route::post('/juknis', [AdminJuknisController::class, 'update'])->name('juknis.update');
     Route::delete('/juknis', [AdminJuknisController::class, 'destroy'])->name('juknis.destroy');
+    Route::put('/juknis/jadwal', [AdminJuknisController::class, 'updateSchedule'])->name('juknis.schedule');
 
     Route::get('/peserta', [AdminParticipantController::class, 'index'])->name('participants.index');
     Route::get('/peserta/laporan', [AdminParticipantController::class, 'export'])->name('participants.export');

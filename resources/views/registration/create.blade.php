@@ -3,6 +3,7 @@
 @section('title', 'Pendaftaran Peserta · MTQ Kota Malang 2026')
 
 @section('content')
+    @php($schedule = app(\App\Services\EventSchedule::class))
     <section class="hero">
         <div class="hero-copy">
             <span class="eyebrow eyebrow-{{ $period['status'] }}"><span class="eyebrow-dot"></span>
@@ -18,15 +19,15 @@
             <div class="event-details">
                 <div>
                     <span class="detail-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 2v2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2zm-2 7h14v10H5z" fill="currentColor"/></svg></span>
-                    <span><small>Tanggal</small><strong>Sabtu–Minggu, 26–27 Des 2026</strong></span>
+                    <span><small>Tanggal</small><strong>{{ $schedule->eventDaysLabel(short: true) }}</strong></span>
                 </div>
                 <div>
                     <span class="detail-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 10.4 3.5 2-1 1.8L11 13V6h2z" fill="currentColor"/></svg></span>
-                    <span><small>Waktu</small><strong>07.30 WIB s.d. selesai</strong></span>
+                    <span><small>Waktu</small><strong>{{ $schedule->eventTime() }}</strong></span>
                 </div>
                 <div>
                     <span class="detail-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" fill="currentColor"/></svg></span>
-                    <span><small>Tempat</small><strong>Malang Creative Center (MCC) Lt. 2</strong></span>
+                    <span><small>Tempat</small><strong>{{ $schedule->eventPlace() }}</strong></span>
                 </div>
                 <div>
                     <span class="detail-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8 1.5V8h4.5zM8 12h8v2H8zm0 4h8v2H8z" fill="currentColor"/></svg></span>
@@ -34,7 +35,7 @@
                 </div>
                 <div>
                     <span class="detail-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-8 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 2c-2.7 0-8 1.3-8 4v2h10v-2c0-1 .4-1.9 1.1-2.6C10 13.2 8.8 13 8 13zm8 0c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z" fill="currentColor"/></svg></span>
-                    <span><small>Technical meeting (H-5)</small><strong>{{ \Illuminate\Support\Carbon::parse(config('mtq.technical_meeting_date'))->translatedFormat('l, j F Y') }}</strong></span>
+                    <span><small>Technical meeting{{ $schedule->technicalMeetingOffset() ? ' ('.$schedule->technicalMeetingOffset().')' : '' }}</small><strong>{{ $schedule->technicalMeetingLabel() }}</strong></span>
                 </div>
             </div>
             <div class="hero-actions">

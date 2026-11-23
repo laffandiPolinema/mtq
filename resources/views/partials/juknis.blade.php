@@ -159,8 +159,9 @@
     <ol class="juknis-timeline">
         <li><small>Pendaftaran online</small><strong>Mulai 9 November 2026</strong><span>s.d. kuota terpenuhi</span></li>
         <li><small>Sekretariat (bantuan daftar)</small><strong>Pukul 08.00–12.00</strong><span>konfirmasi dahulu ke CP</span></li>
-        <li><small>Technical Meeting & pengesahan</small><strong>Senin, 21 Desember 2026</strong><span>ambil nomor urut & maqra’</span></li>
-        <li><small>Pelaksanaan lomba</small><strong>Sabtu–Minggu, 26–27 Des 2026</strong><span>Malang Creative Center Lt. 2</span></li>
+        @php($schedule = app(\App\Services\EventSchedule::class))
+        <li><small>Technical Meeting & pengesahan</small><strong>{{ $schedule->technicalMeetingLabel() }}</strong>@if ($schedule->technicalMeetingNote() !== '')<span>{{ $schedule->technicalMeetingNote() }}</span>@endif</li>
+        <li><small>Pelaksanaan lomba</small><strong>{{ $schedule->eventDaysLabel(short: true) }}</strong><span>{{ $schedule->eventPlace() }}</span></li>
     </ol>
 
     <div class="juknis-tabs" role="tablist" aria-label="Juknis per cabang">
